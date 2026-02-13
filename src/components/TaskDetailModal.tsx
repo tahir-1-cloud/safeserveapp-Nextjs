@@ -79,7 +79,7 @@ export default function TaskDetailModal({ scheduleId, onClose }: Props) {
                     {/* Schedule Date */}
                     <div className="mb-3 text-sm font-semibold">
                       <span className="text-[#5D5FEF]">
-                       Task & Schedule Date:
+                        Schedule Date:
                       </span>{' '}
                       {new Date(occ.occurrenceDate).toLocaleDateString(
                         'en-GB'
