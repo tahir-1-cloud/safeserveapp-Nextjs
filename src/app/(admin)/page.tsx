@@ -3,7 +3,6 @@ import { EcommerceMetrics } from "@/components/ecommerce/EcommerceMetrics";
 import React from "react";
 import MonthlyTarget from "@/components/ecommerce/MonthlyTarget";
 import MonthlySalesChart from "@/components/ecommerce/MonthlySalesChart";
-import StatisticsChart from "@/components/ecommerce/StatisticsChart";
 
 export const metadata: Metadata = {
   title:
@@ -24,9 +23,7 @@ export default function Ecommerce() {
         <MonthlyTarget />
       </div>
 
-      <div className="col-span-12">
-        <StatisticsChart />
-      </div>
+      
 
      
 
