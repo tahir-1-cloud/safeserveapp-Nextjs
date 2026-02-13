@@ -1,0 +1,156 @@
+'use client';
+
+import { useEffect, useState, useMemo } from 'react';
+import { Table, Input, Select, Button, Space, Popconfirm } from 'antd';
+import type { ColumnsType } from 'antd/es/table';
+import { LeaveApplication } from '@/types/staffApplication';
+import { getAllApplication,approveLeave,cancelLeave } from '@/services/application';
+import { toast } from 'sonner';
+import CustomLoader from '@/components/CustomerLoader';
+
+export default function PendingLeavePage() {
+  const [applications, setApplications] = useState<LeaveApplication[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [pageSize, setPageSize] = useState(10);
+
+  // Fetch applications once
+  useEffect(() => {
+    getAllApplication()
+      .then(data => setApplications(data))
+      .catch(err => {
+        toast.error('Failed to fetch pending applications');
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  // Approve / Cancel action
+  const handleAction = async (id: number, action: 'approve' | 'cancel') => {
+    try {
+      if (action === 'approve') {
+        await approveLeave(id);
+        toast.success('Leave approved successfully');
+      } else {
+        await cancelLeave(id);
+        toast.success('Leave cancelled successfully');
+      }
+      setApplications(prev => prev.filter(app => app.leaveId !== id));
+    } catch (error) {
+      console.error(error);
+      toast.error(`Failed to ${action} leave`);
+    }
+  };
+
+  // Filtered data
+  const filteredData = useMemo(() => {
+    const lower = searchTerm.toLowerCase();
+    return applications.filter(app =>
+      (app.name ?? '').toLowerCase().includes(lower) ||
+      (app.department ?? '').toLowerCase().includes(lower) ||
+      (app.leaveType ?? '').toLowerCase().includes(lower)
+    );
+  }, [applications, searchTerm]);
+
+  // Columns
+  const columns: ColumnsType<LeaveApplication> = useMemo(() => [
+    { title: '#', key: 'index', width: 40, render: (_: any, __: any, index: number) => index + 1 },
+    { title: 'Name', dataIndex: 'name', key: 'name', width: 120 },
+    { title: 'Department', dataIndex: 'department', key: 'department', width: 100 },
+    { title: 'Leave Type', dataIndex: 'leaveType', key: 'leaveType', width: 110 },
+    { 
+      title: 'Start Date', 
+      dataIndex: 'startdate', 
+      key: 'startdate', 
+      width: 110,
+      render: (val: string) => val ? new Date(val).toLocaleDateString() : '-',
+    },
+    { 
+      title: 'End Date', 
+      dataIndex: 'enddate', 
+      key: 'enddate', 
+      width: 110,
+      render: (val: string) => val ? new Date(val).toLocaleDateString() : '-',
+    },
+    { title: 'Start Time', dataIndex: 'starttime', key: 'starttime', width: 95 },
+    { title: 'End Time', dataIndex: 'endTime', key: 'endTime', width: 95 },
+    { 
+      title: 'Action', 
+      key: 'action', 
+      width: 150,
+      render: (_: any, record: LeaveApplication) => (
+        <Space size="small" wrap>
+          <Popconfirm
+            title="Approve?"
+            description="This will approve the leave application. Are you sure?"
+            onConfirm={() => handleAction(record.leaveId, 'approve')}
+            okText="Yes"
+            cancelText="No"
+            getPopupContainer={() => document.body}
+          >
+            <Button type="primary" size="small" style={{ borderRadius: 20, minWidth: 70 }}>
+              Approve
+            </Button>
+          </Popconfirm>
+
+          <Popconfirm
+            title="Cancel leave?"
+            description="This will cancel the leave application. Are you sure?"
+            onConfirm={() => handleAction(record.leaveId, 'cancel')}
+            okText="Yes"
+            cancelText="No"
+            getPopupContainer={() => document.body}
+          >
+            <Button type="primary" danger size="small" style={{ borderRadius: 20, minWidth: 70 }}>
+              Cancel
+            </Button>
+          </Popconfirm>
+        </Space>
+      ),
+    },
+  ], []);
+
+  return (
+    <div className="min-h-screen bg-gray-50 py-10 px-4 flex justify-center">
+      <div className="w-full max-w-7xl bg-white rounded-2xl shadow-md p-6">
+        {/* Header */}
+        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">📝 Pending Leave Applications</h1>
+          <div className="flex items-center gap-3">
+            <span className="text-gray-500 text-sm">Show</span>
+            <Select
+              value={pageSize}
+              onChange={value => setPageSize(value)}
+              options={[5, 10, 20, 50].map(n => ({ value: n, label: n.toString() }))}
+              className="w-20"
+            />
+            <Input.Search
+              placeholder="Search..."
+              allowClear
+              value={searchTerm}
+              onChange={e => setSearchTerm(e.target.value)}
+              className="w-64"
+            />
+          </div>
+        </div>
+
+        {/* Table */}
+       {loading ? (
+        <CustomLoader />   // just the spinner, no text
+        )  : filteredData.length === 0 ? (
+          <div className="text-center py-20 text-gray-600 text-lg font-medium">No pending applications.</div>
+        ) : (
+          <Table
+            columns={columns}
+            dataSource={filteredData}
+            rowKey="leaveId"
+            pagination={{ pageSize, showSizeChanger: false, showTotal: total => `Total ${total} applications` }}
+            bordered
+            className="border border-gray-200 rounded-lg"
+            rowClassName={() => 'hover:bg-gray-50'}
+            onHeaderRow={() => ({ className: 'bg-blue-50 text-gray-700' })}
+          />
+        )}
+      </div>
+    </div>
+  );
+}
