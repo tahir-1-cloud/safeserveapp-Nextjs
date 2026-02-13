@@ -6,7 +6,7 @@ import { ViewScheduleDto } from '@/types/scheduledto';
 import { useRouter } from 'next/navigation';
 import TaskDetailModal from '@/components/TaskDetailModal';
 
-
+import CustomLoader from '@/components/CustomerLoader';
 export default function AdminSchedulesPage() {
  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
 
@@ -47,7 +47,7 @@ export default function AdminSchedulesPage() {
   );
 
   if (loading) {
-    return <div className="p-6 text-center">Loading schedules…</div>;
+    return <div className="p-6 text-center">   <CustomLoader /> </div>;
   }
 
   return (
