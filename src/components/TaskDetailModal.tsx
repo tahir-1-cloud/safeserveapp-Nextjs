@@ -36,8 +36,15 @@ export default function TaskDetailModal({ scheduleId, onClose }: Props) {
       <div className="w-full max-w-4xl rounded-xl bg-white shadow-lg">
         {/* Header */}
         <div className="flex items-center justify-between border-b px-6 py-4">
-          <h2 className="text-lg font-bold text-[#5D5FEF]">Schedule Task Details</h2>
-          <button onClick={onClose} className="text-black font-bold hover:opacity-80">✕</button>
+          <h2 className="text-lg font-bold text-[#5D5FEF]">
+            Schedule Task Details
+          </h2>
+          <button
+            onClick={onClose}
+            className="font-bold text-black hover:opacity-80"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Body */}
@@ -48,39 +55,49 @@ export default function TaskDetailModal({ scheduleId, onClose }: Props) {
             <>
               {/* Top Info */}
               <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-3 text-sm">
-               <div className="flex items-center mb-2">
-                {/* Label */}
-                <div className="text-sm font-semibold  mr-1">Task Title:</div>
-
-                {/* Checkbox + Task Title */}
-                <div className="flex items-center">
-                    <input
-                    type="checkbox"
-                    checked={data.occurrences.every(o => o.status === 1)}
-                    disabled
-                    className="h-5 w-5 accent-[#5D5FEF] mr-1"
-                    />
-                    <span className="font-semibold text-black">{data.taskTitle}</span>
-                </div>
-                </div>
-
-
                 <div>
-                  <span className="font-semibold text-black">Time:</span> {data.startTime} – {data.endTime}
+                  <span className="font-semibold text-black">Task:</span>{' '}
+                  {data.taskTitle}
                 </div>
                 <div>
-                  <span className="font-semibold text-black">Type:</span> {data.scheduleType}
+                  <span className="font-semibold text-black">Time:</span>{' '}
+                  {data.startTime} – {data.endTime}
+                </div>
+                <div>
+                  <span className="font-semibold text-black">Type:</span>{' '}
+                  {data.scheduleType}
                 </div>
               </div>
 
-              {/* Occurrences */}
+              {/* Occurrences (DATE-WISE) */}
               <div className="space-y-4">
                 {data.occurrences.map(occ => (
-                  <div key={occ.taskOccurrenceId} className="rounded-lg border border-gray-200 p-4">
-                    {/* Occurrence Date */}
-                    <div className="mb-2 text-sm font-semibold">
-                          <div className="text-sm font-semibold"> <h6>Subtask & Schedule Date: </h6></div>
-                      {new Date(occ.occurrenceDate).toLocaleDateString()}
+                  <div
+                    key={occ.taskOccurrenceId}
+                    className="rounded-lg border border-gray-200 p-4"
+                  >
+                    {/* Schedule Date */}
+                    <div className="mb-3 text-sm font-semibold">
+                      <span className="text-[#5D5FEF]">
+                       Task & Schedule Date:
+                      </span>{' '}
+                      {new Date(occ.occurrenceDate).toLocaleDateString(
+                        'en-GB'
+                      )}
+                    </div>
+
+                    {/* Main Task (date-wise) */}
+                    <div className="flex items-center mb-3">
+                      <input
+                        type="checkbox"
+                        checked={occ.status === 1}
+                        disabled
+                        style={{ accentColor: '#5D5FEF' }}
+                        className="h-5 w-5 mr-1"
+                      />
+                      <span className="font-semibold text-black">
+                        {data.taskTitle}
+                      </span>
                     </div>
 
                     {/* Subtasks */}
@@ -88,19 +105,18 @@ export default function TaskDetailModal({ scheduleId, onClose }: Props) {
                       {occ.subTasks.map(sub => (
                         <label
                           key={sub.subTaskOccurrenceId}
-                          className="flex items-center gap-3 rounded-md border px-3 py-2 text-sm"
+                          className="flex items-center rounded-md border px-3 py-2 text-sm"
                         >
                           <input
                             type="checkbox"
                             checked={sub.status === 1}
                             disabled
-                              style={{ accentColor: '#5D5FEF' }}
-                            className="h-5 w-5  mr-1"
+                            style={{ accentColor: '#5D5FEF' }}
+                            className="h-5 w-5 mr-1"
                           />
-                          <div>
-                            <div className="text-black font-medium">{sub.subTaskName}</div>
-                            
-                          </div>
+                          <span className="font-medium text-black">
+                            {sub.subTaskName}
+                          </span>
                         </label>
                       ))}
                     </div>
