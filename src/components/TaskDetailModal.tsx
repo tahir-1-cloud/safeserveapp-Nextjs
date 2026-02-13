@@ -32,112 +32,111 @@ export default function TaskDetailModal({ scheduleId, onClose }: Props) {
   if (!scheduleId) return null;
 
   return (
-    <h3>tetstsdfsd</h3>
-    // <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
-    //   <div className="w-full max-w-4xl rounded-xl bg-white shadow-lg">
-    //     {/* Header */}
-    //     <div className="flex items-center justify-between border-b px-6 py-4">
-    //       <h2 className="text-lg font-bold text-[#5D5FEF]">
-    //         Schedule Task Details
-    //       </h2>
-    //       <button
-    //         onClick={onClose}
-    //         className="font-bold text-black hover:opacity-80"
-    //       >
-    //         ✕
-    //       </button>
-    //     </div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
+      <div className="w-full max-w-4xl rounded-xl bg-white shadow-lg">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b px-6 py-4">
+          <h2 className="text-lg font-bold text-[#5D5FEF]">
+            Schedule Task Details
+          </h2>
+          <button
+            onClick={onClose}
+            className="font-bold text-black hover:opacity-80"
+          >
+            ✕
+          </button>
+        </div>
 
-    //     {/* Body */}
-    //     <div className="max-h-[70vh] overflow-y-auto px-6 py-4">
-    //       {loading && <p className="text-center">Loading details…</p>}
+        {/* Body */}
+        <div className="max-h-[70vh] overflow-y-auto px-6 py-4">
+          {loading && <p className="text-center">Loading details…</p>}
 
-    //       {!loading && data && (
-    //         <>
-    //           {/* Top Info */}
-    //           <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-3 text-sm">
-    //             <div>
-    //               <span className="font-semibold text-black">Task:</span>{' '}
-    //               {data.taskTitle}
-    //             </div>
-    //             <div>
-    //               <span className="font-semibold text-black">Time:</span>{' '}
-    //               {data.startTime} – {data.endTime}
-    //             </div>
-    //             <div>
-    //               <span className="font-semibold text-black">Type:</span>{' '}
-    //               {data.scheduleType}
-    //             </div>
-    //           </div>
+          {!loading && data && (
+            <>
+              {/* Top Info */}
+              <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-3 text-sm">
+                <div>
+                  <span className="font-semibold text-black">Task:</span>{' '}
+                  {data.taskTitle}
+                </div>
+                <div>
+                  <span className="font-semibold text-black">Time:</span>{' '}
+                  {data.startTime} – {data.endTime}
+                </div>
+                <div>
+                  <span className="font-semibold text-black">Type:</span>{' '}
+                  {data.scheduleType}
+                </div>
+              </div>
 
-    //           {/* Occurrences (DATE-WISE) */}
-    //           <div className="space-y-4">
-    //             {data.occurrences.map(occ => (
-    //               <div
-    //                 key={occ.taskOccurrenceId}
-    //                 className="rounded-lg border border-gray-200 p-4"
-    //               >
-    //                 {/* Schedule Date */}
-    //                 <div className="mb-3 text-sm font-semibold">
-    //                   <span className="text-[#5D5FEF]">
-    //                     Schedule Date:
-    //                   </span>{' '}
-    //                   {new Date(occ.occurrenceDate).toLocaleDateString(
-    //                     'en-GB'
-    //                   )}
-    //                 </div>
+              {/* Occurrences (DATE-WISE) */}
+              <div className="space-y-4">
+                {data.occurrences.map(occ => (
+                  <div
+                    key={occ.taskOccurrenceId}
+                    className="rounded-lg border border-gray-200 p-4"
+                  >
+                    {/* Schedule Date */}
+                    <div className="mb-3 text-sm font-semibold">
+                      <span className="text-[#5D5FEF]">
+                        Schedule Date:
+                      </span>{' '}
+                      {new Date(occ.occurrenceDate).toLocaleDateString(
+                        'en-GB'
+                      )}
+                    </div>
 
-    //                 {/* Main Task (date-wise) */}
-    //                 <div className="flex items-center mb-3">
-    //                   <input
-    //                     type="checkbox"
-    //                     checked={occ.status === 1}
-    //                     disabled
-    //                     style={{ accentColor: '#5D5FEF' }}
-    //                     className="h-5 w-5 mr-1"
-    //                   />
-    //                   <span className="font-semibold text-black">
-    //                     {data.taskTitle}
-    //                   </span>
-    //                 </div>
+                    {/* Main Task (date-wise) */}
+                    <div className="flex items-center mb-3">
+                      <input
+                        type="checkbox"
+                        checked={occ.status === 1}
+                        disabled
+                        style={{ accentColor: '#5D5FEF' }}
+                        className="h-5 w-5 mr-1"
+                      />
+                      <span className="font-semibold text-black">
+                        {data.taskTitle}
+                      </span>
+                    </div>
 
-    //                 {/* Subtasks */}
-    //                 <div className="space-y-2">
-    //                   {occ.subTasks.map(sub => (
-    //                     <label
-    //                       key={sub.subTaskOccurrenceId}
-    //                       className="flex items-center rounded-md border px-3 py-2 text-sm"
-    //                     >
-    //                       <input
-    //                         type="checkbox"
-    //                         checked={sub.status === 1}
-    //                         disabled
-    //                         style={{ accentColor: '#5D5FEF' }}
-    //                         className="h-5 w-5 mr-1"
-    //                       />
-    //                       <span className="font-medium text-black">
-    //                         {sub.subTaskName}
-    //                       </span>
-    //                     </label>
-    //                   ))}
-    //                 </div>
-    //               </div>
-    //             ))}
-    //           </div>
-    //         </>
-    //       )}
-    //     </div>
+                    {/* Subtasks */}
+                    <div className="space-y-2">
+                      {occ.subTasks.map(sub => (
+                        <label
+                          key={sub.subTaskOccurrenceId}
+                          className="flex items-center rounded-md border px-3 py-2 text-sm"
+                        >
+                          <input
+                            type="checkbox"
+                            checked={sub.status === 1}
+                            disabled
+                            style={{ accentColor: '#5D5FEF' }}
+                            className="h-5 w-5 mr-1"
+                          />
+                          <span className="font-medium text-black">
+                            {sub.subTaskName}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
 
-    //     {/* Footer */}
-    //     <div className="flex justify-end border-t px-6 py-3">
-    //       <button
-    //         onClick={onClose}
-    //         className="rounded-md bg-[#5D5FEF] px-5 py-2 text-sm text-white hover:opacity-90"
-    //       >
-    //         Close
-    //       </button>
-    //     </div>
-    //   </div>
-    // </div>
+        {/* Footer */}
+        <div className="flex justify-end border-t px-6 py-3">
+          <button
+            onClick={onClose}
+            className="rounded-md bg-[#5D5FEF] px-5 py-2 text-sm text-white hover:opacity-90"
+          >
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
