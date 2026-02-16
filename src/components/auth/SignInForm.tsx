@@ -26,7 +26,7 @@ export default function SignInForm() {
 
     if (email === hardcodedEmail && password === hardcodedPassword) {
       localStorage.setItem("user", email); // optional
-      router.push("/staff/dashboard"); // redirect to admin dashboard
+      router.push("/admin/dashboard"); // redirect to admin dashboard
     } else {
       toast.error("Invalid email or password");
     }
