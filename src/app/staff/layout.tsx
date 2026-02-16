@@ -1,11 +1,12 @@
 "use client";
 
 import { useSidebar } from "@/context/SidebarContext";
-import AppHeader from "@/layout/admin/AppHeader";
-
+import AppHeader from "@/layout/staff/AppHeader";
+import AppSidebar from "@/layout/staff/AppSidebar";
+import Backdrop from "@/layout/staff/Backdrop";
 import React from "react";
 
-export default function AdminLayout({
+export default function StaffLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -21,7 +22,10 @@ export default function AdminLayout({
 
   return (
     <div className="min-h-screen xl:flex">
-   
+      {/* Sidebar and Backdrop */}
+      <AppSidebar />
+      <Backdrop />
+      {/* Main Content Area */}
       <div
         className={`flex-1 transition-all  duration-300 ease-in-out ${mainContentMargin}`}
       >

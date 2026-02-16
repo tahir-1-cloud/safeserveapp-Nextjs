@@ -3,7 +3,7 @@ import React, { useEffect, useRef, useState,useCallback } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useSidebar } from "../context/SidebarContext";
+import { useSidebar } from "@/context/SidebarContext";
 import {CalendarDaysIcon, ChevronDownIcon, DocumentTextIcon, Squares2X2Icon, UserIcon, ClipboardIcon} from '@heroicons/react/24/solid';
 import {FiMoreHorizontal, FiPieChart} from 'react-icons/fi';
 
@@ -18,64 +18,39 @@ const navItems: NavItem[] = [
  
     {
         icon: <UserIcon className="w-5 h-5" />,
-        name: "Admin Dashboard",
-        path: "/admin/dashboard",
+        name: "Dashboard",
+        path: "/staff/dashboard",
     },
     {
         icon: <ClipboardIcon className="w-5 h-5"  />,
-        name: "Staff",
-        subItems: [
-            { name: "Add Staff", path: "/admin/staff/addstaff", pro: false },
-            { name: "View Staf", path: "/admin/staff/viewstaff", pro: false }],
+        name: "Profile",
+        path: "/staff/profile/view",
+     
     },
-    {
-        icon: <Squares2X2Icon className="w-5 h-5"/>,
-        name: "Schedule",
-        subItems: [
-          { name: "Add Schedule", path: "/admin/Schedule/add", pro: false },
-          { name: "View Schedule", path: "/admin/Schedule/view", pro: false },
-          { name: "Schedule Calendar", path: "/admin/Schedule/calendar", pro: false },],
-    },
-    {
-        icon: <ClipboardIcon className="w-5 h-5"/>,
-        name: "Task Management",
-        subItems: [
-          { name: "Create Task", path: "/admin/task/create", pro: false },
-          { name: "Task View", path: "/admin/task/view", pro: false },
-        ],
-    },
-     {
-        icon: <DocumentTextIcon className="w-5 h-5"/>,
+
+      {
+        icon: <DocumentTextIcon className="w-5 h-5"  />,
         name: "Application",
-        subItems: [
-              { name: "Pending", path: "/admin/application/pending", pro: false },
-              { name: "Approved", path: "/admin/application/approved", pro: false },
-              { name: "Cancelled", path: "/admin/application/cancell", pro: false },
-           
-        ],
+        path: "/staff/view",
+     
     },
-     {
-        icon: <ClipboardIcon className="w-5 h-5"/>,
-        name: "Raw Orders",
-        subItems: [
-            { name: "Units", path: "/alerts", pro: false },
-            { name: "Products", path: "/avatars", pro: false },
-            { name: "Suppliers", path: "/badge", pro: false },
-        ],
-            
+      {
+        icon: <CalendarDaysIcon className="w-5 h-5"  />,
+        name: "Schedule",
+        path: "/staff/schedule/view",
+     
      },
-     {
-        icon: <Squares2X2Icon className="w-5 h-5"/>,
-        name: "Temperature Record",
-        subItems: [
-           { name: "Temp Staff-Report", path: "/alerts", pro: false },
-          { name: "View Combine-data", path: "/avatars", pro: false },
-          { name: "Live Sensor-Temp", path: "/admin/sensor/templive", pro: false },
-           
-        ],
-            
-    },
    
+
+ {
+        icon: <Squares2X2Icon className="w-5 h-5"  />,
+        name: "Task Detail",
+        path: "/staff/schedule/",
+     
+     },
+  
+   
+
    
     
 
@@ -307,7 +282,7 @@ const AppSidebar: React.FC = () => {
                             !isExpanded && !isHovered ? "lg:justify-center" : "justify-start"
                         }`}
                         >
-                        <Link href="/admin/dashboard">
+                        <Link href="/staff/dashboard">
                             {isExpanded || isHovered || isMobileOpen ? (
                             <Image
                                 src="/images/logo/savservelogo.svg"
