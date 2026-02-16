@@ -76,3 +76,10 @@ export interface TaskDetailDto {
   scheduleType: string;
   occurrences: TaskOccurrenceDto[];
 }
+
+export interface CalendarEventDto {
+    id: number;
+    title: string;
+    eventdate: string; // ISO date string
+    
+}

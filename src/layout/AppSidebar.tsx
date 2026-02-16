@@ -34,7 +34,7 @@ const navItems: NavItem[] = [
         subItems: [
           { name: "Add Schedule", path: "/admin/Schedule/add", pro: false },
           { name: "View Schedule", path: "/admin/Schedule/view", pro: false },
-          { name: "Schedule Calendar", path: "/badge", pro: false },],
+          { name: "Schedule Calendar", path: "/admin/Schedule/calendar", pro: false },],
     },
     {
         icon: <ClipboardIcon className="w-5 h-5"/>,

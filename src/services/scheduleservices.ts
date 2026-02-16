@@ -1,5 +1,5 @@
 import axiosInstance from "@/services/axiosInstance";
-import {StafNameModel,TaskNameModel,CreatScheduleModel,ViewScheduleDto,TaskDetailDto} from "@/types/scheduledto";
+import {StafNameModel,TaskNameModel,CreatScheduleModel,ViewScheduleDto,TaskDetailDto,CalendarEventDto} from "@/types/scheduledto";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -84,4 +84,21 @@ export const getTaskDetailByScheduleId = async (scheduleId: number): Promise<Tas
     }
     throw error;
   }
+};
+
+//For Calendar event
+
+// API call function
+export const getAllScheduleCalendar = async (): Promise<CalendarEventDto[]> => {
+    try {
+        const response = await axiosInstance.get<CalendarEventDto[]>(`/StaffSetting/GetSchedulesCalendar`);
+        return response.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error: ' + (error.response?.data || error.message));
+        } else {
+            toast.error('Unexpected error');
+        }
+        throw error;
+    }
 };
