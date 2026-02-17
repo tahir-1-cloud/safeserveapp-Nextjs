@@ -1,4 +1,3 @@
-import SignUpForm from "@/components/auth/SignUpForm";
 import { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -8,5 +7,6 @@ export const metadata: Metadata = {
 };
 
 export default function SignUp() {
-  return <SignUpForm />;
+  return 
+    <h1>test</h1>
 }
