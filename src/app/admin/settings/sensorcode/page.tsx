@@ -8,8 +8,11 @@ import { addSensorCode, getAllSensorCode } from '@/services/setting';
 import CustomLoader from '@/components/CustomerLoader';
 import { PlusOutlined } from '@ant-design/icons';
 import { toast } from 'sonner';
-
+ 
+import { AdminAuth } from '@/hooks/AdminAuth';
 const SensorPage = () => {
+  
+AdminAuth();
   const [sensorCode, setSensorCode] = useState('');
   const [sensorList, setSensorList] = useState<DefineSenor[]>([]);
   const [loading, setLoading] = useState(false);

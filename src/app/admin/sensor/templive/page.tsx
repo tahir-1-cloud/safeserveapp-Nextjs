@@ -5,8 +5,10 @@ import { getLiveSensorDataWithAssetName } from '@/services/sensordata';
 import { SensorWithName } from '@/types/sensorWithName';
 import SensorGauge from '@/components/SensorGauge';
 import CustomLoader from '@/components/CustomerLoader';
-
+import { AdminAuth } from '@/hooks/AdminAuth';
 export default function TemperatureDashboard() {
+  
+AdminAuth();
   const [data, setData] = useState<SensorWithName[]>([]);
   const [loading, setLoading] = useState(true);
 

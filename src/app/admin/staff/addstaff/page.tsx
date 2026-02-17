@@ -7,8 +7,10 @@ import { registerStaff,getAllRoles } from '@/services/registrationservices';
 import { useRouter } from 'next/navigation';
 import { toast } from "sonner";
 import {PlusOutlined} from '@ant-design/icons';
+import { AdminAuth } from '@/hooks/AdminAuth';
 
 export default function StaffForm() {
+  AdminAuth();
   const router = useRouter();
     const [roles, setRoles] = useState<RoleName[]>([]);
     const [loading, setLoading] = useState(false);

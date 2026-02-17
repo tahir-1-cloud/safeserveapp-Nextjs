@@ -10,8 +10,10 @@ import { addRole, getAllRoles } from '@/services/setting';
 import { RoleModel } from '@/types/settingdto';
 
 import CustomLoader from '@/components/CustomerLoader';
+import { AdminAuth } from '@/hooks/AdminAuth';
 
 const RolePage = () => {
+  AdminAuth();
   const [roleName, setRoleName] = useState('');
   const [roleList, setRoleList] = useState<RoleModel[]>([]);
   const [loading, setLoading] = useState(false);

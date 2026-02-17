@@ -1,13 +1,13 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { Button } from 'antd';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 import { addFridgeassets, getSensorCode } from '@/services/setting';
 import { CreatFridgeAsset, SensorModel } from '@/types/settingdto';
-
+ 
+import { AdminAuth } from '@/hooks/AdminAuth';
 const generateTempRange = () =>
   Array.from({ length: 41 }, (_, i) => {
     const v = i - 20;
@@ -61,6 +61,8 @@ const assetSubTypesData: Record<string, string[]> = {
 };
 
 export default function AddFridgeFreezer() {
+  
+ AdminAuth();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [sensorCodes, setSensorCodes] = useState<SensorModel[]>([]);

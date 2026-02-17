@@ -6,8 +6,11 @@ import type { ColumnsType } from 'antd/es/table';
 import { TaskDetailsViewModel } from '@/types/taskManagement';
 import { getAllTasks } from '@/services/taskservices';
 import CustomLoader from '@/components/CustomerLoader';
+import { AdminAuth } from '@/hooks/AdminAuth';
 
 export default function TaskListPage() {
+  
+ AdminAuth();
   const [tasks, setTasks] = useState<TaskDetailsViewModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

@@ -6,8 +6,11 @@ import { ViewScheduleDto } from '@/types/scheduledto';
 import { useRouter } from 'next/navigation';
 import TaskDetailModal from '@/components/TaskDetailModal';
 
+import { AdminAuth } from '@/hooks/AdminAuth';
 import CustomLoader from '@/components/CustomerLoader';
 export default function AdminSchedulesPage() {
+  AdminAuth();
+
  const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);
 
   const [schedules, setSchedules] = useState<ViewScheduleDto[]>([]);

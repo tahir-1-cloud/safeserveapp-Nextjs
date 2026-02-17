@@ -10,7 +10,7 @@ export const AdminAuth = () => {
     const isAdmin = localStorage.getItem("__sa") === "a9f3e7c1b2";
 
     if (!isAdmin) {
-      router.replace("/login");
+      router.replace("/signin");
     }
   }, []);
 };

@@ -6,7 +6,7 @@ import { toast } from "sonner";
 
 export const loginStaff = async (data: LoginModel): Promise<LoginResponse> => {
     try{
-        const response = await axiosInstance.post<LoginResponse>(`/Authentication/LoginStudent`, data);
+        const response = await axiosInstance.post<LoginResponse>(`/Security/LoginUser`, data);
         //for save token
         const token = response.data.token;
         if (!token) {

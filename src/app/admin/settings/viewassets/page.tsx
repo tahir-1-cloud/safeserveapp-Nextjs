@@ -9,7 +9,9 @@ import { FridgeTemp,FridgeStatus } from '@/types/settingdto';
 import { GetFridgeTemp } from '@/services/setting';
 import CustomLoader from '@/components/CustomerLoader';
 import { useRouter } from 'next/navigation';
+import { AdminAuth } from '@/hooks/AdminAuth';
 export default function FridgeTemperaturePage() {
+  AdminAuth();
   const [data, setData] = useState<FridgeTemp[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');

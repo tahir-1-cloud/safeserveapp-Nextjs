@@ -10,8 +10,10 @@ import { getAllScheduleCalendar } from '@/services/scheduleservices';
 import { CalendarEventDto } from '@/types/scheduledto';
 import TaskDetailModal from '@/components/TaskDetailModal';
 import CustomLoader from '@/components/CustomerLoader';
-
+import { AdminAuth } from '@/hooks/AdminAuth';
 export default function CalendarPage() {
+    AdminAuth();
+
     const [events, setEvents] = useState<CalendarEventDto[]>([]);
     const [loading, setLoading] = useState(true);
     const [selectedScheduleId, setSelectedScheduleId] = useState<number | null>(null);

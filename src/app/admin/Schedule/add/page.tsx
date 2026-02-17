@@ -9,13 +9,17 @@ import { toast } from 'sonner';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { useRouter } from 'next/navigation';
 import utc from 'dayjs/plugin/utc';
+ 
+import { AdminAuth } from '@/hooks/AdminAuth';
 dayjs.extend(customParseFormat);
 dayjs.extend(utc);
 
 const { Option } = Select;
 
 const CreateSchedulePage: React.FC = () => {
-    const router = useRouter();
+     AdminAuth();
+  
+  const router = useRouter();
   const [staffList, setStaffList] = useState<StafNameModel[]>([]);
   const [taskList, setTaskList] = useState<TaskNameModel[]>([]);
   const [form, setForm] = useState<CreatScheduleModel>({

@@ -2,15 +2,6 @@
 
 import React, { useState } from 'react';
 import {
-  Button,
-  Select,
-  Radio,
-  Input,
-  Typography,
-  Space,
-} from 'antd';
-import {
-  ArrowLeftOutlined,
   PlusOutlined,
   DeleteOutlined,
 } from '@ant-design/icons';
@@ -19,11 +10,12 @@ import { toast } from 'sonner';
 import { createTask } from '@/services/taskservices';
 import { TaskCreatModel } from '@/types/taskManagement';
 import { useRouter } from 'next/navigation';
-import { PlusIcon } from '@/icons';
-const { Title } = Typography;
-const { TextArea } = Input;
+ 
+import { AdminAuth } from '@/hooks/AdminAuth';
 
 const TaskPage: React.FC = () => {
+  
+AdminAuth();
   /* ---------------- SINGLE MODEL STATE ---------------- */
     const router = useRouter();
   const [task, setTask] = useState<TaskCreatModel>({

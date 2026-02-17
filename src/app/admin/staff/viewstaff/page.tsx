@@ -6,8 +6,9 @@ import type { ColumnsType } from 'antd/es/table';
 import { StaffViewModel } from '@/types/registrationdto';
 import { getAllRegisterStaff } from '@/services/registrationservices';
 import CustomLoader from '@/components/CustomerLoader';
-
+import { AdminAuth } from '@/hooks/AdminAuth';
 export default function ViewStaffPage() {
+  AdminAuth();
   const [staff, setStaff] = useState<StaffViewModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
