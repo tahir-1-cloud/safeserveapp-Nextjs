@@ -47,3 +47,9 @@ export interface CreatFridgeAsset {
   assetsSubTypes?: string;
 }
 
+export interface JobDescModel {
+  id: number;
+  createdDate?: string; 
+  roleName?: string;
+}
+

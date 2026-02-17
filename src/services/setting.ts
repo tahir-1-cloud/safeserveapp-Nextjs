@@ -1,5 +1,7 @@
 import axiosInstance from "@/services/axiosInstance";
-import {DefineSenor,FridgeTemp,RoleModel,SensorApiItem,SensorModel,CreatFridgeAsset} from "@/types/settingdto";
+import {DefineSenor,FridgeTemp,RoleModel,SensorApiItem,SensorModel,CreatFridgeAsset
+       ,JobDescModel
+} from "@/types/settingdto";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -119,4 +121,22 @@ export const getAllRoles = async (): Promise<RoleModel[]> => {
     }
     throw error;
   }
+};
+
+
+//Job Description api
+
+export const getJobDescription = async (): Promise<JobDescModel[]> => {
+    try{
+        const response = await axiosInstance.get<JobDescModel[]>(`/ProfileSetting/JdList`);
+        return response.data;
+    } 
+    catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error:', error.response?.data || error.message);
+        } else {
+            toast.error('Unexpected error');
+        }
+        throw error; 
+    }
 };
