@@ -2,15 +2,32 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
+import { LoginResponse } from "@/types/auth";
 
 export const AdminAuth = () => {
   const router = useRouter();
 
   useEffect(() => {
-    const isAdmin = localStorage.getItem("__sa") === "a9f3e7c1b2";
+    try {
+      // Get saved user data
+      const userData = localStorage.getItem("userData");
+      if (!userData) {
+        router.replace("/signin");
+        return;
+      }
 
-    if (!isAdmin) {
+      const user: LoginResponse = JSON.parse(userData);
+
+      // Check if role is admin
+      if (user.roleName.toLowerCase() !== "admin") {
+        router.replace("/signin");
+      }
+    } catch {
+      localStorage.removeItem("userData");
+      localStorage.removeItem("token");
       router.replace("/signin");
     }
   }, []);
+
+  return null; // this hook does not render anything
 };
