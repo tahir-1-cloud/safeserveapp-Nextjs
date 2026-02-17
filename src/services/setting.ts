@@ -140,3 +140,12 @@ export const getJobDescription = async (): Promise<JobDescModel[]> => {
         throw error; 
     }
 };
+
+export const getJobDescriptionById = async (id: number): Promise<string> => {
+  try {
+    const response = await axiosInstance.get<{ descriptioncontent: string }>( `/ProfileSetting/JdListById/${id}`);
+    return response.data.descriptioncontent;
+  } catch (error: unknown) {
+    throw error; // let the component handle the error
+  }
+};

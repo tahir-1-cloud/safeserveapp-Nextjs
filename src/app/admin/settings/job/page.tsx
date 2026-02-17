@@ -1,13 +1,14 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { Table, Input, Select, Button } from 'antd';
+import { Table, Input, Select, Button, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { JobDescModel } from '@/types/settingdto';
-import { getJobDescription } from '@/services/setting';
+import { getJobDescription, getJobDescriptionById } from '@/services/setting';
 import CustomLoader from '@/components/CustomerLoader';
 import { AdminAuth } from '@/hooks/AdminAuth';
 import { toast } from 'sonner';
+import axios from 'axios';
 
 export default function ViewJDPage() {
   AdminAuth();
@@ -16,6 +17,10 @@ export default function ViewJDPage() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [pageSize, setPageSize] = useState(10);
+
+  // Modal state
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContent, setModalContent] = useState<string>('');
 
   // Fetch Job Descriptions
   useEffect(() => {
@@ -36,9 +41,24 @@ export default function ViewJDPage() {
     );
   }, [jobDescriptions, searchTerm]);
 
+  // Action handler: View Detail
+  const handleViewDetails = async (record: JobDescModel) => {
+    try {
+      const content = await getJobDescriptionById(record.id);
+      setModalContent(content);
+      setIsModalOpen(true); // open modal
+    } catch (error: unknown) {
+      if (axios.isAxiosError(error)) {
+        toast.error(error.response?.data || 'Axios error fetching content');
+      } else {
+        toast.error('Unexpected error fetching content');
+      }
+    }
+  };
+
   // Columns with View Details button
   const columns: ColumnsType<JobDescModel> = useMemo(() => [
-    { title: '#', key: 'index', width: 50, render: (_: any, __: any, index: number) => index + 1 },
+    { title: 'Sr', key: 'index', width: 50, render: (_: any, __: any, index: number) => index + 1 },
     { title: 'Role Name', dataIndex: 'roleName', key: 'roleName', width: 200 },
     { 
       title: 'Created Date', 
@@ -47,38 +67,31 @@ export default function ViewJDPage() {
       width: 150,
       render: (val?: string) => val ? new Date(val).toLocaleDateString() : '-',
     },
- {
-  title: 'Actions',
-  key: 'actions',
-  width: 200, // slightly wider to fit two buttons
-  render: (_: any, record: JobDescModel) => (
-    <div className="flex gap-2">
-      <Button
-        type="primary"
-        size="small"
-        onClick={() => handleViewDetails(record)}
-      >
-        View Detail
-      </Button>
-      <Button
-        type="default"
-        danger
-        size="small"
-        // onClick={() => handleDelete(record.id)}
-      >
-        Delete
-      </Button>
-    </div>
-  ),
-}
-
+    {
+      title: 'Actions',
+      key: 'actions',
+      width: 200,
+      render: (_: any, record: JobDescModel) => (
+        <div className="flex gap-2">
+          <Button
+            type="primary"
+            size="small"
+            onClick={() => handleViewDetails(record)}
+          >
+            View Detail
+          </Button>
+          <Button
+            type="default"
+            danger
+            size="small"
+            // onClick={() => handleDelete(record.id)}
+          >
+            Delete
+          </Button>
+        </div>
+      ),
+    }
   ], []);
-
-  // Action handler
-  const handleViewDetails = (record: JobDescModel) => {
-    toast.info(`Viewing details for: ${record.roleName}`);
-    // Or navigate to a detail page: router.push(`/job-description/${record.id}`);
-  };
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 flex justify-center">
@@ -131,6 +144,37 @@ export default function ViewJDPage() {
             })}
           />
         )}
+
+       {/* Modal for View Detail */}
+        <Modal
+          title={
+            <div className="flex items-center gap-2 py-1">
+              <div className="w-1 h-6 bg-blue-600 rounded-full" />
+              <h3 className="text-xl font-semibold text-blue-700 m-0">
+                Job Description Detail
+              </h3>
+            </div>
+          }
+          open={isModalOpen}
+          onCancel={() => setIsModalOpen(false)}
+          footer={null}
+          width={800}
+          styles={{
+            header: {
+              borderBottom: '1px solid black',
+              paddingBottom: '12px',
+              marginBottom: '0',
+            },
+          
+            body: {
+              maxHeight: '500px',
+              overflowY: 'auto',
+              padding: '20px 24px',
+            },
+          }}
+        >
+          <div dangerouslySetInnerHTML={{ __html: modalContent }} />
+        </Modal>
       </div>
     </div>
   );
