@@ -1,6 +1,6 @@
 import axiosInstance from "@/services/axiosInstance";
 import {DefineSenor,FridgeTemp,RoleModel,SensorApiItem,SensorModel,CreatFridgeAsset
-       ,JobDescModel
+       ,JobDescModel,PolicyModel
 } from "@/types/settingdto";
 import axios from "axios";
 import { toast } from "sonner";
@@ -148,4 +148,22 @@ export const getJobDescriptionById = async (id: number): Promise<string> => {
   } catch (error: unknown) {
     throw error; // let the component handle the error
   }
+};
+
+//Policy api consume 
+
+
+export const getPolicy = async (): Promise<PolicyModel[]> => {
+    try{
+        const response = await axiosInstance.get<PolicyModel[]>(`/ProfileSetting/JdList`);
+        return response.data;
+    } 
+    catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error:', error.response?.data || error.message);
+        } else {
+            toast.error('Unexpected error');
+        }
+        throw error; 
+    }
 };

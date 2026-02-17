@@ -53,3 +53,9 @@ export interface JobDescModel {
   roleName?: string;
 }
 
+export interface PolicyModel {
+  id: number;
+  policyType?: string;
+  policyDate?: string; 
+  roleName?: string;
+}
