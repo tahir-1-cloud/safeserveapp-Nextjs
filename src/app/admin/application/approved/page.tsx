@@ -6,10 +6,8 @@ import type { ColumnsType } from 'antd/es/table';
 import { LeaveApplication } from '@/types/staffApplication';
 import { getApprovdApplication } from '@/services/application';
 import CustomLoader from '@/components/CustomerLoader';
-import { AdminAuth } from "@/hooks/AdminAuth";   
 export default function ApprovedLeavePage() {
  
-  AdminAuth();
   
   const [applications, setApplications] = useState<LeaveApplication[]>([]);
   const [loading, setLoading] = useState(true);
