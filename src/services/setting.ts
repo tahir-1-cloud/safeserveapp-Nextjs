@@ -164,6 +164,20 @@ export async function addJob(code: CreateJobModel) {
     }
 }
 
+export async function deleteJob(id: number ) {
+  try {
+    const response = await axiosInstance.delete(`/ProfileSetting/DeleteJd/${id}`);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data || 'Error deleting job');
+    } else {
+      toast.error('Unexpected error deleting job');
+    }
+    throw error;
+  }
+}
+
 //Policy api consume 
 
 
@@ -181,7 +195,7 @@ export async function addPolicy(code: CreatePolicyModel) {
     }
 }
 
-export const getPolicy = async (): Promise<PolicyModel[]> => {
+export  const getPolicy = async (): Promise<PolicyModel[]> => {
     try{
         const response = await axiosInstance.get<PolicyModel[]>(`/ProfileSetting/PolicyList`);
         return response.data;
@@ -194,4 +208,27 @@ export const getPolicy = async (): Promise<PolicyModel[]> => {
         }
         throw error; 
     }
+};
+
+export async function deletePolicy(id: number ) {
+  try {
+    const response = await axiosInstance.delete(`/ProfileSetting/DeletePolicy/${id}`);
+    return response.data;
+  } catch (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data || 'Error deleting policy');
+    } else {
+      toast.error('Unexpected error deleting policy');
+    }
+    throw error;
+  }
+}
+
+export const getpolicyById = async (id: number): Promise<string> => {
+  try {
+    const response = await axiosInstance.get<{ policyDetails: string }>( `/ProfileSetting/GetPolicyById/${id}`);
+    return response.data.policyDetails;
+  } catch (error: unknown) {
+    throw error; // let the component handle the error
+  }
 };

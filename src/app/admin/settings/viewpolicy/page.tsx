@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { Table, Input, Select, Button, Modal } from 'antd';
+import { Table, Input, Select, Button, Modal ,Popconfirm} from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { PolicyModel, JobDescModel } from '@/types/settingdto';
-import { getPolicy, getJobDescriptionById } from '@/services/setting';
+import { getPolicy, getpolicyById,deletePolicy } from '@/services/setting';
 import CustomLoader from '@/components/CustomerLoader';
 import { AdminAuth } from '@/hooks/AdminAuth';
 import { toast } from 'sonner';
@@ -41,7 +41,7 @@ export default function ViewPolicyPage() {
 
   const handleViewDetails = async (record: PolicyModel) => {
     try {
-      const content = await getJobDescriptionById(record.policyId);
+      const content = await getpolicyById(record.policyId);
       setModalContent(content);
       setIsModalOpen(true);
     } catch (error: unknown) {
@@ -52,6 +52,17 @@ export default function ViewPolicyPage() {
       }
     }
   };
+
+  const handleDelete = async (id: number) => {
+    try {
+      await deletePolicy(id);
+      // Optionally, remove the item from your state list
+      setPolicy(prev => prev.filter(p => p.policyId !== id));
+    } catch (err) {
+      console.error('Failed to delete policy:', err);
+    }
+  };
+
 
   const columns: ColumnsType<PolicyModel> = useMemo(() => [
     { title: 'Sr', key: 'index', width: 50, render: (_: any, __: any, index: number) => index + 1 },
@@ -73,9 +84,17 @@ export default function ViewPolicyPage() {
           <Button type="primary" size="small" onClick={() => handleViewDetails(record)}>
             View Detail
           </Button>
-          <Button type="default" danger size="small">
-            Delete
-          </Button>
+         <Popconfirm
+             title="Delete policy?"
+            description="This will delete the Policy. Are you sure?"
+            onConfirm={() => handleDelete(record.policyId)}
+            okText="Yes"
+            cancelText="No"
+          >
+            <Button type="default" danger size="small">
+              Delete
+            </Button>
+          </Popconfirm>
         </div>
       ),
     }
@@ -165,7 +184,7 @@ export default function ViewPolicyPage() {
             <div className="flex items-center gap-2 py-1">
               <div className="w-1 h-6 bg-blue-600 rounded-full" />
               <h3 className="text-xl font-semibold text-[#5D5FEF] m-0">
-                Job Description Detail
+                Policy Description Detail
               </h3>
             </div>
           }

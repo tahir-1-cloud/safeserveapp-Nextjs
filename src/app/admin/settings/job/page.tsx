@@ -1,10 +1,10 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { Table, Input, Select, Button, Modal } from 'antd';
+import { Table, Input, Select, Button, Modal,Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { JobDescModel } from '@/types/settingdto';
-import { getJobDescription, getJobDescriptionById } from '@/services/setting';
+import { getJobDescription, getJobDescriptionById,deleteJob } from '@/services/setting';
 import CustomLoader from '@/components/CustomerLoader';
 import { AdminAuth } from '@/hooks/AdminAuth';
 import { toast } from 'sonner';
@@ -57,6 +57,17 @@ export default function ViewJDPage() {
     }
   };
 
+  const handleDelete = async (id: number) => {
+    try {
+      await deleteJob(id);
+      // Optionally, remove the item from your state list
+      setJobDescriptions(prev => prev.filter(p => p.id !== id));
+      toast.error('Job deleted successfully:');
+    } catch (err) {
+      toast.error('Failed to delete policy:');
+    }
+  };
+
   // Columns with View Details button
   const columns: ColumnsType<JobDescModel> = useMemo(() => [
     { title: 'Sr', key: 'index', width: 50, render: (_: any, __: any, index: number) => index + 1 },
@@ -81,14 +92,17 @@ export default function ViewJDPage() {
           >
             View Detail
           </Button>
-          <Button
-            type="default"
-            danger
-            size="small"
-            // onClick={() => handleDelete(record.id)}
+            <Popconfirm
+             title="Delete Job?"
+            description="This will delete the Job. Are you sure?"
+            onConfirm={() => handleDelete(record.id)}
+            okText="Yes"
+            cancelText="No"
           >
-            Delete
-          </Button>
+            <Button type="default" danger size="small">
+              Delete
+            </Button>
+          </Popconfirm>
         </div>
       ),
     }
