@@ -1,14 +1,14 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getLiveSensorDataWithAssetName } from '@/services/sensordata';
 import { SensorWithName } from '@/types/sensorWithName';
 import SensorGauge from '@/components/SensorGauge';
 import CustomLoader from '@/components/CustomerLoader';
 import { AdminAuth } from '@/hooks/AdminAuth';
+
 export default function TemperatureDashboard() {
-  
-AdminAuth();
+  AdminAuth();
   const [data, setData] = useState<SensorWithName[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -31,11 +31,8 @@ AdminAuth();
     };
   }, []);
 
-  // ✅ filter ONCE only
-  const validSensors = useMemo(
-    () => data.filter(d => d.sid !== 'UNKNOWN'),
-    [data]
-  );
+  // Filter valid sensors immediately without useMemo
+  const validSensors = data.filter(d => d.sid !== 'UNKNOWN');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100 p-4 md:p-6">
