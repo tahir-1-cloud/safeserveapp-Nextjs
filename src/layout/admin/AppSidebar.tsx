@@ -69,7 +69,7 @@ const navItems: NavItem[] = [
         name: "Temperature Record",
         subItems: [
         //    { name: "Temp Staff-Report", path: "/alerts", pro: false },
-        //   { name: "View Combine-data", path: "/avatars", pro: false },
+           { name: "Staf-Temp-report", path: "/admin/sensor/tempreport", pro: false },
           { name: "Live Sensor-Temp", path: "/admin/sensor/templive", pro: false },
            
         ],

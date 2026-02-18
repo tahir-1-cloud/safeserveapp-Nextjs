@@ -10,3 +10,13 @@ export interface SensorAsset {
   sid: string;
   fridgeName: string;
 }
+
+
+export interface TempChecksModel{
+  tempId:number;
+  fridgeName:string;
+  temperature:string;
+  notes:string;
+  doneBy:string;
+  checkDate:string;
+}
