@@ -1,6 +1,6 @@
 import axiosInstance from "@/services/axiosInstance";
 import {DefineSenor,FridgeTemp,RoleModel,SensorApiItem,SensorModel,CreatFridgeAsset
-       ,JobDescModel,PolicyModel
+       ,JobDescModel,PolicyModel,CreateJobModel, CreatePolicyModel
 } from "@/types/settingdto";
 import axios from "axios";
 import { toast } from "sonner";
@@ -150,12 +150,40 @@ export const getJobDescriptionById = async (id: number): Promise<string> => {
   }
 };
 
+export async function addJob(code: CreateJobModel) {
+    try {
+        const response = await axiosInstance.post('/ProfileSetting/AddJobDescription',code);
+        return response.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error adding assets', error.response?.data || error.message);
+        } else {
+            toast.error('Unexpected error adding assets');
+        }
+        throw error; 
+    }
+}
+
 //Policy api consume 
 
 
+export async function addPolicy(code: CreatePolicyModel) {
+    try {
+        const response = await axiosInstance.post('/ProfileSetting/AddPolicy',code);
+        return response.data;
+    } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error adding assets', error.response?.data || error.message);
+        } else {
+            toast.error('Unexpected error adding assets');
+        }
+        throw error; 
+    }
+}
+
 export const getPolicy = async (): Promise<PolicyModel[]> => {
     try{
-        const response = await axiosInstance.get<PolicyModel[]>(`/ProfileSetting/JdList`);
+        const response = await axiosInstance.get<PolicyModel[]>(`/ProfileSetting/PolicyList`);
         return response.data;
     } 
     catch (error: unknown) {

@@ -31,10 +31,14 @@ export interface FridgeTemp {
   status: FridgeStatus;
 }
 
+
 export interface RoleModel{
   id?:number
   name: string;
 }
+
+
+
 
 export interface CreatFridgeAsset {
   id?: number;
@@ -54,8 +58,20 @@ export interface JobDescModel {
 }
 
 export interface PolicyModel {
-  id: number;
+  policyId: number;
   policyType?: string;
   policyDate?: string; 
   roleName?: string;
+}
+
+export interface CreateJobModel {
+  roleId: number;
+  descriptionContent: string;
+}
+
+export interface CreatePolicyModel {
+  policyid: number;
+  policyType?: string;
+  roleId: number;
+  policyDetail:string
 }

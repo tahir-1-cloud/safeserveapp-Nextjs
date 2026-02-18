@@ -43,14 +43,17 @@ export default function SignInForm() {
       localStorage.setItem("token", response.token);
 
       localStorage.setItem("userData", JSON.stringify(response));
-      toast.success(response.message || "Login successful");
 
       // 🔹 Role-based redirect
       const role = response.roleName.toLowerCase();
       if (role === "admin") {
         router.replace("/admin/dashboard");
+        toast.success(response.message || "Login successfully");
+
       } else {
         router.replace("/staff/dashboard");
+        toast.success(response.message || "Login successfully");
+
       }
     } catch (error: any) {
       toast.error(

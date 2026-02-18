@@ -3,50 +3,47 @@
 import { useEffect, useState, useMemo } from 'react';
 import { Table, Input, Select, Button, Modal } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
-import { JobDescModel, PolicyModel } from '@/types/settingdto';
+import { PolicyModel, JobDescModel } from '@/types/settingdto';
 import { getPolicy, getJobDescriptionById } from '@/services/setting';
 import CustomLoader from '@/components/CustomerLoader';
 import { AdminAuth } from '@/hooks/AdminAuth';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { useRouter } from 'next/navigation';
+import { PlusIcon } from '@heroicons/react/24/solid';
 
 export default function ViewPolicyPage() {
   AdminAuth();
+  const router = useRouter();
 
   const [policy, setPolicy] = useState<PolicyModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [pageSize, setPageSize] = useState(10);
 
-  // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalContent, setModalContent] = useState<string>('');
 
-  // Fetch Job Descriptions
   useEffect(() => {
     getPolicy()
       .then(data => setPolicy(data))
       .catch(err => {
-        console.error('Error fetching job descriptions:', err);
-        toast.error('Failed to fetch job descriptions');
+        console.error('Error fetching policy:', err);
+        toast.error('Failed to fetch policy');
       })
       .finally(() => setLoading(false));
   }, []);
 
-  // Filtered data based on search
   const filteredData = useMemo(() => {
     const lower = searchTerm.toLowerCase();
-    return policy.filter(jd =>
-      (jd.roleName ?? '').toLowerCase().includes(lower)
-    );
+    return policy.filter(p => (p.roleName ?? '').toLowerCase().includes(lower));
   }, [policy, searchTerm]);
 
-  // Action handler: View Detail
-  const handleViewDetails = async (record: JobDescModel) => {
+  const handleViewDetails = async (record: PolicyModel) => {
     try {
-      const content = await getJobDescriptionById(record.id);
+      const content = await getJobDescriptionById(record.policyId);
       setModalContent(content);
-      setIsModalOpen(true); // open modal
+      setIsModalOpen(true);
     } catch (error: unknown) {
       if (axios.isAxiosError(error)) {
         toast.error(error.response?.data || 'Axios error fetching content');
@@ -56,12 +53,10 @@ export default function ViewPolicyPage() {
     }
   };
 
-  // Columns with View Details button
   const columns: ColumnsType<PolicyModel> = useMemo(() => [
     { title: 'Sr', key: 'index', width: 50, render: (_: any, __: any, index: number) => index + 1 },
     { title: 'Role Name', dataIndex: 'roleName', key: 'roleName', width: 200 },
     { title: 'Policy Type', dataIndex: 'policyType', key: 'policyType', width: 200 },
-
     { 
       title: 'Created Date', 
       dataIndex: 'policyDate', 
@@ -72,22 +67,13 @@ export default function ViewPolicyPage() {
     {
       title: 'Actions',
       key: 'actions',
-      width: 200,
+      width: 150,
       render: (_: any, record: PolicyModel) => (
         <div className="flex gap-2">
-          <Button
-            type="primary"
-            size="small"
-            onClick={() => handleViewDetails(record)}
-          >
+          <Button type="primary" size="small" onClick={() => handleViewDetails(record)}>
             View Detail
           </Button>
-          <Button
-            type="default"
-            danger
-            size="small"
-            // onClick={() => handleDelete(record.id)}
-          >
+          <Button type="default" danger size="small">
             Delete
           </Button>
         </div>
@@ -97,12 +83,38 @@ export default function ViewPolicyPage() {
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4 flex justify-center">
-      <div className="w-full max-w-7xl bg-white rounded-2xl shadow-md p-6">
-        {/* Header */}
+      <div className="w-full max-w-7xl bg-white rounded-2xl shadow-md p-6 overflow-x-hidden">
+
+        {/* Top Row → Right-aligned buttons */}
+        <div className="flex items-center justify-between mb-4">
+          <div></div>
+          <div className="flex gap-2">
+            <button
+              type="button"
+              onClick={() => router.push("/admin/dashboard")}
+              className="rounded-md border border-stroke px-4 py-2 text-sm font-medium text-black hover:bg-gray-100"
+            >
+              Back
+            </button>
+
+            <button
+              type="button"
+              onClick={() => router.push("/admin/settings/addpolicy")}
+              className="flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+            >
+              <span className="flex w-4 justify-center">
+                <PlusIcon className="h-4 w-4" />
+              </span>
+              <span className="ml-2">Add policy</span>
+            </button>
+          </div>
+        </div>
+
+        <br />
+
+        {/* Header → Title + Show + Search */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-            📝  Policy
-          </h1>
+          <h3 className="text-2xl md:text-3xl font-bold text-gray-800">📝 Policy Detail</h3>
           <div className="flex items-center gap-3">
             <span className="text-gray-500 text-sm">Show</span>
             <Select
@@ -126,13 +138,13 @@ export default function ViewPolicyPage() {
           <CustomLoader />
         ) : filteredData.length === 0 ? (
           <div className="text-center py-20 text-gray-600 text-lg font-medium">
-            No  policy found.
+            No policy found.
           </div>
         ) : (
           <Table
             columns={columns}
             dataSource={filteredData}
-            rowKey="id"
+            rowKey={record => record.policyId} // ensures unique key
             pagination={{
               pageSize,
               showSizeChanger: false,
@@ -147,12 +159,12 @@ export default function ViewPolicyPage() {
           />
         )}
 
-       {/* Modal for View Detail */}
+        {/* Modal for View Detail */}
         <Modal
           title={
             <div className="flex items-center gap-2 py-1">
               <div className="w-1 h-6 bg-blue-600 rounded-full" />
-              <h3 className="text-xl font-semibold text-blue-700 m-0">
+              <h3 className="text-xl font-semibold text-[#5D5FEF] m-0">
                 Job Description Detail
               </h3>
             </div>
@@ -167,7 +179,6 @@ export default function ViewPolicyPage() {
               paddingBottom: '12px',
               marginBottom: '0',
             },
-          
             body: {
               maxHeight: '500px',
               overflowY: 'auto',
@@ -177,6 +188,7 @@ export default function ViewPolicyPage() {
         >
           <div dangerouslySetInnerHTML={{ __html: modalContent }} />
         </Modal>
+
       </div>
     </div>
   );

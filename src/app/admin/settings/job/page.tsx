@@ -9,10 +9,11 @@ import CustomLoader from '@/components/CustomerLoader';
 import { AdminAuth } from '@/hooks/AdminAuth';
 import { toast } from 'sonner';
 import axios from 'axios';
-
+import { useRouter } from 'next/navigation';
+import { PlusIcon } from "@heroicons/react/24/solid";
 export default function ViewJDPage() {
   AdminAuth();
-
+  const router = useRouter();
   const [jobDescriptions, setJobDescriptions] = useState<JobDescModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -93,89 +94,113 @@ export default function ViewJDPage() {
     }
   ], []);
 
-  return (
-    <div className="min-h-screen bg-gray-50 py-10 px-4 flex justify-center">
-      <div className="w-full max-w-7xl bg-white rounded-2xl shadow-md p-6">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
-          <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
-            📝 Job Descriptions
-          </h1>
-          <div className="flex items-center gap-3">
-            <span className="text-gray-500 text-sm">Show</span>
-            <Select
-              value={pageSize}
-              onChange={value => setPageSize(value)}
-              options={[5, 10, 20, 50].map(n => ({ value: n, label: n.toString() }))}
-              className="w-20"
-            />
-            <Input.Search
-              placeholder="Search Role Name..."
-              allowClear
-              value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
-              className="w-64"
-            />
-          </div>
+return (
+  <div className="min-h-screen bg-gray-50 py-10 px-4 flex justify-center">
+    <div className="w-full max-w-7xl bg-white rounded-2xl shadow-md p-6 overflow-x-hidden">
+
+      {/* Top Row → Right-aligned buttons */}
+      <div className="flex items-center justify-between mb-4">
+        {/* Left side (can be empty) */}
+        <div></div>
+
+        {/* Right side buttons */}
+        <div className="flex gap-2">
+          <button
+            type="button"
+            onClick={() => router.push("/admin/dashboard")}
+            className="rounded-md border border-stroke px-4 py-2 text-sm font-medium text-black hover:bg-gray-100 dark:border-strokedark dark:text-white dark:hover:bg-meta-4"
+          >
+            Back
+          </button>
+
+          <button
+            type="button"
+            onClick={() => router.push("/admin/settings/addjob")}
+            className="flex items-center rounded-md bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+          >
+            <span className="flex w-4 justify-center">
+              <PlusIcon className="h-4 w-4" />
+            </span>
+            <span className="ml-2">Add Job</span>
+          </button>
         </div>
-
-        {/* Table */}
-        {loading ? (
-          <CustomLoader />
-        ) : filteredData.length === 0 ? (
-          <div className="text-center py-20 text-gray-600 text-lg font-medium">
-            No job descriptions found.
-          </div>
-        ) : (
-          <Table
-            columns={columns}
-            dataSource={filteredData}
-            rowKey="id"
-            pagination={{
-              pageSize,
-              showSizeChanger: false,
-              showTotal: total => `Total ${total} items`,
-            }}
-            bordered
-            className="border border-gray-200 rounded-lg"
-            rowClassName={() => 'hover:bg-gray-50'}
-            onHeaderRow={() => ({
-              style: { backgroundColor: '#5D5FEF', color: '#FFFFFF', fontWeight: 600 },
-            })}
-          />
-        )}
-
-       {/* Modal for View Detail */}
-        <Modal
-          title={
-            <div className="flex items-center gap-2 py-1">
-              <div className="w-1 h-6 bg-blue-600 rounded-full" />
-              <h3 className="text-xl font-semibold text-blue-700 m-0">
-                Job Description Detail
-              </h3>
-            </div>
-          }
-          open={isModalOpen}
-          onCancel={() => setIsModalOpen(false)}
-          footer={null}
-          width={800}
-          styles={{
-            header: {
-              borderBottom: '1px solid black',
-              paddingBottom: '12px',
-              marginBottom: '0',
-            },
-          
-            body: {
-              maxHeight: '500px',
-              overflowY: 'auto',
-              padding: '20px 24px',
-            },
-          }}
-        >
-          <div dangerouslySetInnerHTML={{ __html: modalContent }} />
-        </Modal>
       </div>
+
+      <br />
+
+      {/* Header → Title + Show + Search */}
+      <div className="flex flex-col md:flex-row items-center justify-between mb-6 gap-4">
+        <h3 className="text-2xl md:text-3xl font-bold text-gray-800">
+          📝 Job Descriptions
+        </h3>
+
+        <div className="flex items-center gap-3">
+          <span className="text-gray-500 text-sm">Show</span>
+          <Select
+            value={pageSize}
+            onChange={value => setPageSize(value)}
+            options={[5, 10, 20, 50].map(n => ({ value: n, label: n.toString() }))}
+            className="w-20"
+          />
+          <Input.Search
+            placeholder="Search Role Name..."
+            allowClear
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            className="w-64"
+          />
+        </div>
+      </div>
+
+      {/* Table */}
+      {loading ? (
+        <CustomLoader />
+      ) : filteredData.length === 0 ? (
+        <div className="text-center py-20 text-gray-600 text-lg font-medium">
+          No job descriptions found.
+        </div>
+      ) : (
+        <Table
+          columns={columns}
+          dataSource={filteredData}
+          rowKey="id"
+          pagination={{
+            pageSize,
+            showSizeChanger: false,
+            showTotal: total => `Total ${total} items`,
+          }}
+          bordered
+          className="border border-gray-200 rounded-lg"
+          rowClassName={() => 'hover:bg-gray-50'}
+          onHeaderRow={() => ({
+            style: { backgroundColor: '#5D5FEF', color: '#FFFFFF', fontWeight: 600 },
+          })}
+        />
+      )}
+
+      {/* Modal for View Detail */}
+      <Modal
+        title={
+          <div className="flex items-center gap-2 py-1">
+            <div className="w-1 h-6 bg-blue-600 rounded-full" />
+            <h3 className="text-xl font-semibold text-blue-700 m-0">
+              Job Description Detail
+            </h3>
+          </div>
+        }
+        open={isModalOpen}
+        onCancel={() => setIsModalOpen(false)}
+        footer={null}
+        width={800}
+        styles={{
+          header: { borderBottom: '1px solid black', paddingBottom: '12px', marginBottom: 0 },
+          body: { maxHeight: '500px', overflowY: 'auto', padding: '20px 24px' },
+        }}
+      >
+        <div dangerouslySetInnerHTML={{ __html: modalContent }} />
+      </Modal>
     </div>
-  );
+  </div>
+);
+
 }
