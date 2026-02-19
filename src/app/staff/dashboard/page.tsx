@@ -13,9 +13,9 @@ export default function Ecommerce() {
   return (
     <div className="grid grid-cols-12 gap-4 md:gap-6">
       <div className="col-span-12 space-y-6 xl:col-span-7">
-        <EcommerceMetrics />
+        {/* <EcommerceMetrics /> */}
 
-        {/* <MonthlySalesChart /> */}
+        <MonthlySalesChart />
       </div>
         <h3 className="mb-5 text-lg font-semibold text-gray-800 dark:text-white/90 lg:mb-7">
                     Welcome Back : <span className="text-blue-600 font-bold">{user?.fullName}</span>
