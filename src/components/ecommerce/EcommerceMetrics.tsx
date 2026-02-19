@@ -1,81 +1,73 @@
 "use client";
-import React from "react";
-import Badge from "../ui/badge/Badge";
-import { ArrowDownIcon, ArrowUpIcon, BoxIconLine, GroupIcon } from "@/icons";
+import React, { useEffect, useState } from "react";
+import { getdashboardCount } from "@/services/setting";
+import { DashboardModel } from "@/types/settingdto";
+import { GroupIcon, BoxIconLine } from "@/icons";
+import CalendarIcon from "@heroicons/react/24/solid/CalendarIcon";
 
 export const EcommerceMetrics = () => {
+
+   const [data, setData] = useState<DashboardModel | null>(null);
+
+useEffect(() => {
+  const fetchData = async () => {
+    const result = await getdashboardCount();
+    setData(result); // ✅ directly set object
+  };
+  fetchData();
+}, []);
+
   return (
     <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 max-w-6xl mx-auto">
 
-      {/* <!-- Metric Item Start --> */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-          <GroupIcon className="text-gray-800 size-6 dark:text-white/90" />
+      {/* Total Staff */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-[#5d5fef]/10">
+          <GroupIcon className="size-7 text-[#5d5fef]" />
         </div>
 
-        <div className="flex items-end justify-between mt-5">
-          <div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Customers
-            </span>
-            <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              3,782
-            </h4>
-          </div>
-          <Badge color="success">
-            <ArrowUpIcon />
-            11.01%
-          </Badge>
+        <div className="mt-6">
+          <span className="text-sm text-gray-500">
+            Total Employees
+          </span>
+          <h4 className="mt-2 text-3xl font-bold text-[#5d5fef]">
+            {data?.totalStaff ?? 0}
+          </h4>
         </div>
       </div>
-      {/* <!-- Metric Item End --> */}
 
-      {/* <!-- Metric Item Start --> */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-          <BoxIconLine className="text-gray-800 dark:text-white/90" />
+      {/* Pending Applications */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-yellow-100">
+          <BoxIconLine className="size-7 text-yellow-600" />
         </div>
-        <div className="flex items-end justify-between mt-5">
-          <div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Orders
-            </span>
-            <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
-            </h4>
-          </div>
 
-          <Badge color="error">
-            <ArrowDownIcon className="text-error-500" />
-            9.05%
-          </Badge>
+        <div className="mt-6">
+          <span className="text-sm text-gray-500">
+            Pending Applications
+          </span>
+          <h4 className="mt-2 text-3xl font-bold text-yellow-600">
+            {data?.pendingApplications ?? 0}
+          </h4>
         </div>
       </div>
-      {/* <!-- Metric Item End --> */}
-    {/* <!-- Metric Item Start --> */}
-      <div className="rounded-2xl border border-gray-200 bg-white p-5 dark:border-gray-800 dark:bg-white/[0.03] md:p-6">
-        <div className="flex items-center justify-center w-12 h-12 bg-gray-100 rounded-xl dark:bg-gray-800">
-          <BoxIconLine className="text-gray-800 dark:text-white/90" />
-        </div>
-        <div className="flex items-end justify-between mt-5">
-          <div>
-            <span className="text-sm text-gray-500 dark:text-gray-400">
-              Orders
-            </span>
-            <h4 className="mt-2 font-bold text-gray-800 text-title-sm dark:text-white/90">
-              5,359
-            </h4>
-          </div>
 
-          <Badge color="error">
-            <ArrowDownIcon className="text-error-500" />
-            9.05%
-          </Badge>
+      {/* Total Schedules */}
+      <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300">
+        <div className="flex items-center justify-center w-14 h-14 rounded-xl bg-green-100">
+          <CalendarIcon className="size-7 text-green-600" />
+        </div>
+
+        <div className="mt-6">
+          <span className="text-sm text-gray-500">
+            Total Schedules
+          </span>
+          <h4 className="mt-2 text-3xl font-bold text-green-600">
+            {data?.totalSchedules ?? 0}
+          </h4>
         </div>
       </div>
-      {/* <!-- Metric Item End --> */}
-      
-      
+
     </div>
   );
 };

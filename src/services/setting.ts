@@ -1,6 +1,6 @@
 import axiosInstance from "@/services/axiosInstance";
 import {DefineSenor,FridgeTemp,RoleModel,SensorApiItem,SensorModel,CreatFridgeAsset
-       ,JobDescModel,PolicyModel,CreateJobModel, CreatePolicyModel
+       ,JobDescModel,PolicyModel,CreateJobModel, CreatePolicyModel,DashboardModel
 } from "@/types/settingdto";
 import axios from "axios";
 import { toast } from "sonner";
@@ -231,4 +231,21 @@ export const getpolicyById = async (id: number): Promise<string> => {
   } catch (error: unknown) {
     throw error; // let the component handle the error
   }
+};
+
+//Admin dashboard counts
+
+export  const getdashboardCount = async (): Promise<DashboardModel> => {
+    try{
+        const response = await axiosInstance.get<DashboardModel>(`/Dashboard/TotalCounts`);
+        return response.data;
+    } 
+    catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error:', error.response?.data || error.message);
+        } else {
+            toast.error('Unexpected error');
+        }
+        throw error; 
+    }
 };

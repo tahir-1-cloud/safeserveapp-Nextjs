@@ -75,3 +75,11 @@ export interface CreatePolicyModel {
   roleId: number;
   policyDetail:string
 }
+
+//dashboard counts
+
+export interface DashboardModel{
+  totalStaff:number;
+  pendingApplications:number;
+  totalSchedules:number;
+}

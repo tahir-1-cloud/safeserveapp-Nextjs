@@ -79,6 +79,11 @@ export default function CalendarPage() {
 
     return (
         <div className="p-6">
+             <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-800">
+                    Schedule View
+                </h2>
+             </div>
             {loading ? (
                 <CustomLoader />
             ) : (

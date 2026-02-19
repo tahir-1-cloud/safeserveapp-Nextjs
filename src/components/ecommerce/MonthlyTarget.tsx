@@ -62,6 +62,11 @@ export default function MonthlyTarget() {
 
   return (
     <div className="w-full">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-800">
+            Schedule View
+          </h2>
+        </div>
       {loading ? (
         <CustomLoader />
       ) : (
@@ -86,75 +91,98 @@ export default function MonthlyTarget() {
             dayCellClassNames={() => 'px-2 py-1'}
           />
 
-          <style jsx global>{`
-            .fc {
-              width: 100%;
-              font-family: system-ui, -apple-system, sans-serif;
-            }
-
-            /* Toolbar */
-            .fc .fc-toolbar {
-              margin-bottom: 0.5rem;
-              padding: 0 1rem;
-            }
-
-            .fc .fc-button,
-            .fc .fc-button-active {
-              padding: 0.35rem 0.75rem;
-              font-size: 0.85rem;
-              border-radius: 0.375rem;
-            }
-
-            .fc .fc-scrollgrid {
-              border: 1px solid #d1d5db !important; /* calendar border */
-              border-radius: 0.5rem;
-              overflow: hidden;
-            }
-
-            /* Day cells */
-            .fc .fc-daygrid-day {
-              min-height: 55px;
-            }
-
-            .fc .fc-day-other {
-              display: none !important;
-            }
-
-            /* Today highlight */
-            .fc .fc-day-today {
-              background-color: #eff6ff !important;
-            }
-
-            .fc .fc-day-today .fc-daygrid-day-number {
-              background-color: #3b82f6;
-              color: white;
-              border-radius: 50%;
-              width: 1.6rem;
-              height: 1.6rem;
-              display: inline-flex;
-              align-items: center;
-              justify-content: center;
-            }
-
-            /* Events styling */
-            .fc .fc-daygrid-event {
-              margin: 1px 0;
-              padding: 2px 4px;
-              border-radius: 0.25rem;
-              font-size: 0.75rem;
-            }
-
-            /* Responsive adjustments */
-            @media (max-width: 768px) {
-              .fc .fc-toolbar {
-                flex-direction: column;
-                gap: 0.5rem;
+         <style jsx global>{`
+              .fc {
+                width: 100% !important;
+                font-family: system-ui, -apple-system, sans-serif;
               }
+
+              /* Force proper 7-column layout */
+              .fc .fc-scrollgrid,
+              .fc .fc-scrollgrid table {
+                width: 100% !important;
+                table-layout: fixed !important;
+              }
+
+              .fc .fc-col-header-cell,
               .fc .fc-daygrid-day {
-                min-height: 50px;
+                width: 14.2857% !important; /* 100% / 7 */
               }
-            }
-          `}</style>
+
+              /* Toolbar */
+              .fc .fc-toolbar {
+                margin-bottom: 0.5rem;
+                padding: 0 1rem;
+                flex-wrap: wrap;
+              }
+
+              .fc .fc-button,
+              .fc .fc-button-active {
+                padding: 0.35rem 0.75rem;
+                font-size: 0.85rem;
+                border-radius: 0.375rem;
+              }
+
+              /* Calendar border */
+              .fc .fc-scrollgrid {
+                border: 1px solid #d1d5db !important;
+                border-radius: 0.5rem;
+                overflow: hidden;
+              }
+
+              /* Day cells */
+              .fc .fc-daygrid-day {
+                min-height: 60px;
+              }
+
+              .fc .fc-day-other {
+                display: none !important;
+              }
+
+              /* Today highlight */
+              .fc .fc-day-today {
+                background-color: #eff6ff !important;
+              }
+
+              .fc .fc-day-today .fc-daygrid-day-number {
+                background-color: #3b82f6;
+                color: white;
+                border-radius: 50%;
+                width: 1.6rem;
+                height: 1.6rem;
+                display: inline-flex;
+                align-items: center;
+                justify-content: center;
+              }
+
+              /* Events styling */
+              .fc .fc-daygrid-event {
+                margin: 1px 0;
+                padding: 2px 4px;
+                border-radius: 0.25rem;
+                font-size: 0.75rem;
+              }
+
+              /* Responsive */
+              @media (max-width: 1024px) {
+                .fc .fc-daygrid-day {
+                  min-height: 55px;
+                }
+              }
+
+              @media (max-width: 768px) {
+                .fc .fc-toolbar {
+                  flex-direction: column;
+                  gap: 0.5rem;
+                  align-items: center;
+                }
+
+                .fc .fc-daygrid-day {
+                  min-height: 50px;
+                }
+              }
+            `}</style>
+
         </div>
       )}
 
