@@ -18,7 +18,7 @@ useEffect(() => {
 }, []);
 
   return (
-    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 max-w-6xl mx-auto">
+    <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 max-w-6xl">
 
       {/* Total Staff */}
       <div className="rounded-2xl border border-gray-200 bg-white p-6 shadow-sm hover:shadow-md transition-all duration-300">
