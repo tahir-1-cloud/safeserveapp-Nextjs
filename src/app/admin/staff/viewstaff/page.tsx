@@ -1,14 +1,24 @@
 'use client';
 
 import { useEffect, useState, useMemo } from 'react';
-import { Table, Input, Select } from 'antd';
+import { Table, Input, Select, Button, Space, Popconfirm } from 'antd';
 import type { ColumnsType } from 'antd/es/table';
 import { StaffViewModel } from '@/types/registrationdto';
+import { StaffdetailModel } from '@/types/adminsiteprofiledto';
+import { useParams } from "next/navigation";
 import { getAllRegisterStaff } from '@/services/registrationservices';
+import { getStaffById } from '@/services/adminsiteprofileservices';
+import { useRouter } from 'next/navigation';
 import CustomLoader from '@/components/CustomerLoader';
 import { AdminAuth } from '@/hooks/AdminAuth';
 export default function ViewStaffPage() {
   AdminAuth();
+
+   
+  const router=useRouter();
+  const [selectedStaff, setSelectedStaff] = useState<StaffdetailModel | null>(null);
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
   const [staff, setStaff] = useState<StaffViewModel[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -33,6 +43,10 @@ export default function ViewStaffPage() {
     );
   }, [staff, searchTerm]);
 
+const handleViewProfile = (id: number) => {
+    router.push(`/admin/staff/${id}/viewprofile`);
+};
+
   /* 📊 Columns */
   const columns: ColumnsType<StaffViewModel> = useMemo(() => [
     {
@@ -42,11 +56,27 @@ export default function ViewStaffPage() {
       align: 'center',
       render: (_: any, __: any, index: number) => index + 1,
     },
-    { title: 'Name', dataIndex: 'fullName', key: 'fullName', width: 160 },
-    { title: 'Email', dataIndex: 'email', key: 'email', width: 200 },
-    { title: 'Job Role', dataIndex: 'jobRole', key: 'jobRole', width: 120 },
-    { title: 'Contact', dataIndex: 'contact', key: 'contact', width: 140 },
-    { title: 'Address', dataIndex: 'address', key: 'address', ellipsis: true },
+    { title: 'Name', dataIndex: 'fullName', key: 'fullName', width: 150 },
+    { title: 'Email', dataIndex: 'email', key: 'email', width: 185 },
+    { title: 'Job Role', dataIndex: 'jobRole', key: 'jobRole', width: 90 },
+    { title: 'Contact', dataIndex: 'contact', key: 'contact', width: 120 },
+    { 
+    title: 'Action',
+    key: 'action',
+    width: 150,
+    render: (_: any, record: StaffViewModel) => (
+      <Space size="small" wrap>
+        <Button
+          type="primary"
+          size="small"
+          style={{ borderRadius: 20, minWidth: 100 }}
+          onClick={() => handleViewProfile(record.id)}
+        >
+          View Profile
+        </Button>
+      </Space>
+    ),
+    },
   ], []);
 
   return (
