@@ -31,7 +31,7 @@ const navItems: NavItem[] = [
       {
         icon: <DocumentTextIcon className="w-5 h-5"  />,
         name: "Application",
-        path: "/staff/view",
+        path: "/staff/application/add",
      
     },
       {

@@ -1,5 +1,5 @@
 import axiosInstance from "@/services/axiosInstance";
-import {LeaveApplication} from "@/types/staffApplication";
+import {LeaveApplication,AddApplicationdto} from "@/types/staffApplication";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -74,6 +74,22 @@ export const cancelLeave = async (leaveId: number) => {
             toast.error('Axios error Cancel Leave:', error.response?.data || error.message);
         } else {
             toast.error('Unexpected error');
+        }
+        throw error; 
+    }
+};
+
+//staff side add Leave application
+
+export async function addLeaveApplication(data: AddApplicationdto) {
+    try {
+        const response = await axiosInstance.post('/StaffLeave/AddLeave',data);
+        return response.data;
+      } catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error adding Leave Application', error.response?.data || error.message);
+        } else {
+            toast.error('Unexpected error adding Application');
         }
         throw error; 
     }
