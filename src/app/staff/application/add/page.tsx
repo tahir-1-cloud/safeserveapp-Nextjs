@@ -131,7 +131,7 @@ const handleSubmit = async () => {
     "Holiday"
   ];
   return (
-    <div className="rounded-sm border border-stroke bg-white shadow-default p-6.5 max-w-6xl mt-6">
+    <div className="rounded-sm border border-stroke bg-white shadow-default p-6.5 mt-6">
 
       <div className="mb-6">
         <h3 className="font-medium text-[#5D5FEF] text-xl">
