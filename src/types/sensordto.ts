@@ -20,3 +20,9 @@ export interface TempChecksModel{
   doneBy:string;
   checkDate:string;
 }
+
+export interface ManulLimitModel{
+  sid:string;
+  lowerLimit:string;
+  upperLimit:string;
+}

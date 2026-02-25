@@ -1,6 +1,6 @@
 import axios from 'axios';
 import axiosInstance from '@/services/axiosInstance';
-import { SensorData,TempChecksModel } from '@/types/sensordto';
+import { SensorData,TempChecksModel,ManulLimitModel } from '@/types/sensordto';
 import { SensorAsset } from '@/types/sensordto';
 import { SensorWithName } from '@/types/sensorWithName';
 import { toast } from "sonner";
@@ -44,6 +44,21 @@ export const getLiveSensorDataWithAssetName =
   export const getAllTempCheckList = async (): Promise<TempChecksModel[]> => {
     try{
         const response = await axiosInstance.get<TempChecksModel[]>(`/TemperatureUnit/Tempchecklist`);
+        return response.data;
+    } 
+    catch (error: unknown) {
+        if (axios.isAxiosError(error)) {
+            toast.error('Axios error:', error.response?.data || error.message);
+        } else {
+            toast.error('Unexpected error');
+        }
+        throw error; 
+    }
+};
+
+  export const getTempManualLimit = async (): Promise<ManulLimitModel[]> => {
+    try{
+        const response = await axiosInstance.get<ManulLimitModel[]>(`/TemperatureUnit/GetManualLimits`);
         return response.data;
     } 
     catch (error: unknown) {

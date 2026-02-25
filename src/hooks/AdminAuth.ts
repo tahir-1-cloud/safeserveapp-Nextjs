@@ -1,33 +1,47 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LoginResponse } from "@/types/auth";
+import { jwtDecode } from "jwt-decode";
+
+import { LoginResponse, JwtPayload } from "@/types/auth";
 
 export const AdminAuth = () => {
   const router = useRouter();
+  const [user, setUser] = useState<LoginResponse | null>(null);
 
   useEffect(() => {
     try {
-      // Get saved user data
+      const token = localStorage.getItem("token");
       const userData = localStorage.getItem("userData");
-      if (!userData) {
+
+      if (!token || !userData) {
         router.replace("/signin");
         return;
       }
 
       const user: LoginResponse = JSON.parse(userData);
 
-      // Check if role is admin
-      if (user.roleName.toLowerCase() !== "admin") {
+      if (user.roleName?.toLowerCase() !== "admin") {
         router.replace("/signin");
+        return;
       }
+
+      const decoded = jwtDecode<JwtPayload>(token);
+
+      if (decoded.exp * 1000 < Date.now()) {
+        localStorage.clear();
+        router.replace("/signin");
+        return;
+      }
+
+      setUser(user);
+
     } catch {
-      localStorage.removeItem("userData");
-      localStorage.removeItem("token");
+      localStorage.clear();
       router.replace("/signin");
     }
   }, []);
 
-  return null; // this hook does not render anything
+  return { router, user };
 };

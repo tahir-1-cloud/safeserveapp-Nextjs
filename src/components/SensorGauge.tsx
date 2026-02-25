@@ -1,6 +1,6 @@
 'use client';
 
-import { memo, useMemo } from 'react';
+import { memo } from 'react';
 
 interface Props {
   temperature: number;
@@ -12,11 +12,9 @@ interface Props {
 const SensorGauge = ({ temperature, humidity, sid, name }: Props) => {
   const humidityPercentage = Math.min(Math.max(humidity, 0), 100);
 
-  const strokeDasharray = useMemo(() => {
-    const circumference = 2 * Math.PI * 70;
-    const arcLength = (humidityPercentage / 100) * 270;
-    return `${(arcLength / 360) * circumference} ${circumference}`;
-  }, [humidityPercentage]);
+  const circumference = 2 * Math.PI * 70;
+  const arcLength = (humidityPercentage / 100) * 270;
+  const strokeDasharray = `${(arcLength / 360) * circumference} ${circumference}`;
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-md w-full">
@@ -38,7 +36,7 @@ const SensorGauge = ({ temperature, humidity, sid, name }: Props) => {
             strokeWidth="20"
             fill="none"
             strokeLinecap="round"
-            strokeDasharray={`${(270 / 360) * 2 * Math.PI * 70}`}
+            strokeDasharray={`${(270 / 360) * circumference}`}
           />
 
           <circle
