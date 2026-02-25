@@ -180,7 +180,7 @@ const handleSubmit = async (e: React.FormEvent) => {
               placeholder="Please Select Staff"
               value={form.staffId}
               onChange={val => handleChange('staffId', val)}
-              className="w-full rounded-[10px] border-[1.5px] border-[#C0C2C5] bg-transparent px-5 py-3 text-black"
+              className="w-full rounded-[10px] border border-[#c0c2c5] px-5 py-3 outline-none focus:border-[#5D5FEF] transition"
               allowClear
             >
               {staffList.map(staff => (
@@ -198,9 +198,9 @@ const handleSubmit = async (e: React.FormEvent) => {
               placeholder="Please Select Task"
               value={form.taskId}
               onChange={val => handleChange('taskId', val)}
-              className="w-full rounded-[10px] border-[1.5px] border-[#C0C2C5]"
+              className="w-full rounded-[10px] border border-[#c0c2c5] px-5 py-3 outline-none focus:border-[#5D5FEF] transition"
               allowClear
-            >
+             >
               {taskList.map(task => (
                 <Option key={task.id} value={task.id}>
                   {task.name}
@@ -214,7 +214,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         <div>
             <label className="block mb-2.5 text-black dark:text-white">Date From</label>
             <DatePicker
-            className="w-full rounded-[10px] border-[1.5px] border-[#C0C2C5] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            className="w-full ant-custom"
             value={form.startDate ? dayjs(form.startDate, 'DD-MM-YYYY') : null}
             format="DD-MM-YYYY"
             onChange={date => handleChange('startDate', date ? date.format('DD-MM-YYYY') : '')}
@@ -223,7 +223,7 @@ const handleSubmit = async (e: React.FormEvent) => {
         <div>
             <label className="block mb-2.5 text-black dark:text-white">Date To</label>
             <DatePicker
-            className="w-full rounded-[10px] border-[1.5px] border-[#C0C2C5] bg-transparent px-5 py-3 text-black outline-none transition focus:border-primary active:border-primary dark:border-form-strokedark dark:bg-form-input dark:text-white dark:focus:border-primary"
+            className="w-full ant-custom"
             value={form.endDate ? dayjs(form.endDate, 'DD-MM-YYYY') : null}
             format="DD-MM-YYYY"
             disabledDate={current => {
@@ -305,6 +305,17 @@ const handleSubmit = async (e: React.FormEvent) => {
           ))}
         </div>
       </form>
+
+        {/* FIX ANT SIZE */}
+      <style jsx global>{`
+        .ant-custom.ant-picker {
+          width: 100% !important;
+          height: 48px !important;
+          border: 1px solid #c0c2c5 !important;
+          border-radius: 10px !important;
+          padding: 0 16px !important;
+        }
+      `}</style>
     </div>
   );
 };
