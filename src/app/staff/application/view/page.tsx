@@ -389,12 +389,12 @@ const onViewDetail = async (leaveId: number) => {
               <div className="flex gap-2 mt-1">
                 {detailData.morningShift && (
                   <span className="bg-[#5d5fef] text-white text-xs px-2 py-0.5 rounded-full">
-                    🌅 Morning
+                     Morning
                   </span>
                 )}
                 {detailData.eveningShift && (
                   <span className="bg-[#5d5fef] text-white text-xs px-2 py-0.5 rounded-full">
-                    🌙 Evening
+                     Evening
                   </span>
                 )}
               </div>
@@ -428,7 +428,7 @@ const onViewDetail = async (leaveId: number) => {
 
       {/* Further Occurrence */}
       <div className="border-b pb-2">
-        <p className="font-semibold mb-1">Further Occurrence</p>
+        <p className="font-semibold mb-1">Details</p>
         <p className="text-gray-600 whitespace-pre-line text-sm">
           {detailData.furtherOccurence || "-"}
         </p>
