@@ -7,10 +7,11 @@ import { AddApplicationdto } from "@/types/staffApplication";
 import { addLeaveApplication } from "@/services/application";
 import { StaffAuth } from "@/hooks/StaffAuth";
 import { toast } from "sonner";
-
+import { useRouter } from 'next/navigation';
 type TabType = "late" | "absence"  | "halfday";
 
 export default function LeavePage() {
+  const router = useRouter();
   const { user } = StaffAuth();
 
   const [activeTab, setActiveTab] = useState<TabType>("late");
@@ -133,7 +134,9 @@ const handleSubmit = async () => {
   return (
     <div className="rounded-sm border border-stroke bg-white shadow-default p-6.5 mt-6">
 
-      <div className="mb-6">
+     <div className="mb-6 flex items-start justify-between">
+      {/* Left Side */}
+      <div>
         <h3 className="font-medium text-[#5D5FEF] text-xl">
           Leave Application
         </h3>
@@ -141,6 +144,15 @@ const handleSubmit = async () => {
           Submit your leave request.
         </p>
       </div>
+
+      {/* Right Side Button */}
+      <button
+        onClick={() => router.push("/staff/application/view")}
+        className="bg-[#5D5FEF] text-white px-4 py-2 rounded-lg text-sm hover:opacity-90 transition"
+      >
+        View Applications
+      </button>
+    </div>
 
       <hr className="my-4 border-t border-gray-300" />
 
