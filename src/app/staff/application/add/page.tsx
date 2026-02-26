@@ -99,6 +99,7 @@ const handleSubmit = async () => {
     });
 
     toast.success("Application submitted successfully ✅");
+      router.push("/staff/application/view");
 
     // ✅ Reset form after submit (keep user info)
     setFormData((prev) => ({

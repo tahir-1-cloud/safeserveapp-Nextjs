@@ -1,12 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { getStaffApplication } from "@/services/staffsideservices";
+import { getStaffApplication ,getLeaveApplicationById } from "@/services/staffsideservices";
 import { StaffLeaveApplication } from "@/types/staffSidedto";
 import { StaffAuth } from "@/hooks/StaffAuth";
 import { useRouter } from "next/navigation";
 import { DatePicker, Button } from "antd";
 import dayjs from "dayjs";
+
+import { Modal } from "antd";
+
 
 import CustomLoader from '@/components/CustomerLoader';
 
@@ -24,7 +27,9 @@ export default function StaffApplicationsPage() {
   const [appliedFilter, setAppliedFilter] = useState(false);
 
   const [currentPage, setCurrentPage] = useState(1);
-
+  const [detailOpen, setDetailOpen] = useState(false);
+  const [detailData, setDetailData] = useState<StaffLeaveApplication | null>(null);
+  const [detailLoading, setDetailLoading] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -79,13 +84,46 @@ export default function StaffApplicationsPage() {
     }
   };
 
+const renderShift = (app: StaffLeaveApplication) => {
+  return (
+    <div className="mt-1 flex flex-wrap gap-2">
+      {app.morningShift && (
+        <span className="inline-flex items-center bg-[#5d5fef] text-white text-xs font-medium px-3 py-1 rounded-full">
+          🌅 Morning
+        </span>
+      )}
+
+      {app.eveningShift && (
+        <span className="inline-flex items-center bg-[#5d5fef] text-white text-xs font-medium px-3 py-1 rounded-full">
+          🌙 Evening
+        </span>
+      )}
+
+      {!app.morningShift && !app.eveningShift && (
+        <span className="text-gray-400 text-xs">—</span>
+      )}
+    </div>
+  );
+};
+const onViewDetail = async (leaveId: number) => {
+  try {
+    setDetailLoading(true);
+    setDetailOpen(true);
+
+    const data = await getLeaveApplicationById(leaveId);
+    setDetailData(data);
+
+  } finally {
+    setDetailLoading(false);
+  }
+};
   return (
     <div className="p-6 max-w-7xl">
       {/* Header */}
       <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-black">
-          Leave Applications
-        </h1>
+          <h3 className="font-medium text-[#5D5FEF] text-xl">
+          Leave Application
+        </h3>
 
         <button
           onClick={() => router.back()}
@@ -191,9 +229,11 @@ export default function StaffApplicationsPage() {
             {/* Header */}
             <div className="flex justify-between items-center mb-4">
               <h2 className="text-lg font-semibold text-black">
-                {app.leaveType}
+                {app.morningShift || app.eveningShift
+                  ? renderShift(app)
+                  : app.leaveType}
               </h2>
-
+              
               <span
                 className={`text-xs px-3 py-1 rounded-full border font-medium ${getStatusBadge(
                   app.status
@@ -209,6 +249,7 @@ export default function StaffApplicationsPage() {
 
             {/* Body */}
             <div className="space-y-2 text-sm text-black">
+            
               <p><strong>Department:</strong> {app.department}</p>
               <p><strong>Policy:</strong> {app.companyPolicy}</p>
               <p>
@@ -217,7 +258,7 @@ export default function StaffApplicationsPage() {
               </p>
               <p>
                 <strong>To:</strong>{" "}
-                {new Date(app.enddate).toLocaleDateString()}
+                {app.enddate ? new Date(app.enddate).toLocaleDateString() : ""}
               </p>
               <p className="line-clamp-2">
                 <strong>Reason:</strong> {app.reasonAbsence}
@@ -227,20 +268,19 @@ export default function StaffApplicationsPage() {
             {/* Footer */}
             <div className="mt-5 flex justify-between items-center">
               <span className="text-xs text-gray-500">
-                {new Date(app.createdDate).toLocaleDateString()}
+               <strong>Applied Date:</strong>  {new Date(app.createdDate).toLocaleDateString()}
               </span>
 
               <button
-                onClick={() =>
-                  router.push(`/staff/applications/${index}`)
-                }
-                className="bg-[#5d5fef] text-white px-3 py-1 rounded-lg text-xs hover:opacity-90 transition"
-              >
+                onClick={() => onViewDetail(app.leaveId)}
+                  className="bg-[#5d5fef] text-white px-3 py-1 rounded-lg text-xs hover:opacity-90 transition"
+                >
                 View Detail
               </button>
             </div>
           </div>
         ))}
+        
       </div>
 
       {/* Pagination */}
@@ -267,6 +307,9 @@ export default function StaffApplicationsPage() {
           </button>
         </div>
       )}
+
+
+     
            {/* FIX ANT SIZE */}
       <style jsx global>{`
         .ant-custom.ant-picker {
@@ -277,6 +320,152 @@ export default function StaffApplicationsPage() {
           padding: 0 16px !important;
         }
       `}</style>
+
+<Modal
+  open={detailOpen}
+  onCancel={() => setDetailOpen(false)}
+  footer={null}
+  width={520}
+  centered
+  className="!p-0"
+  style={{ padding: "16px", maxHeight: "65vh", overflowY: "auto" }}
+>
+  {detailLoading && (
+    <p className="text-center py-4 text-gray-500 text-sm">Loading...</p>
+  )}
+
+  {detailData && !detailLoading && (
+    <div className="space-y-3 text-sm text-black">
+
+      {/* Basic Info */}
+      <div className="grid grid-cols-2 gap-3 border-b pb-2">
+        <p><strong>Name:</strong> {detailData.name || "-"}</p>
+        <p><strong>Department:</strong> {detailData.department || "-"}</p>
+        <p><strong>Leave Type:</strong> {detailData.leaveType || "-"}</p>
+        <p><strong>Policy:</strong> {detailData.companyPolicy || "-"}</p>
+      </div>
+
+      {/* ✅ Half Day View */}
+      {detailData.companyPolicy?.toLowerCase() === "halfday" ? (
+        <div className="grid grid-cols-2 gap-3 border-b pb-2">
+
+          {/* Shift */}
+          {(detailData.morningShift || detailData.eveningShift) && (
+            <div>
+              <strong>Shift:</strong>
+              <div className="flex gap-2 mt-1">
+                {detailData.morningShift && (
+                  <span className="bg-[#5d5fef] text-white text-xs px-2 py-0.5 rounded-full">
+                    🌅 Morning
+                  </span>
+                )}
+                {detailData.eveningShift && (
+                  <span className="bg-[#5d5fef] text-white text-xs px-2 py-0.5 rounded-full">
+                    🌙 Evening
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Start Date */}
+          <p>
+            <strong>Date:</strong>{" "}
+            {detailData.startdate
+              ? dayjs(detailData.startdate).format("DD-MM-YYYY")
+              : "-"}
+          </p>
+
+    
+
+        </div>
+      ) : (
+        /* ✅ Normal Full Day View */
+        <div className="grid grid-cols-2 gap-3 border-b pb-2">
+
+          {(detailData.morningShift || detailData.eveningShift) && (
+            <div>
+              <strong>Shift:</strong>
+              <div className="flex gap-2 mt-1">
+                {detailData.morningShift && (
+                  <span className="bg-[#5d5fef] text-white text-xs px-2 py-0.5 rounded-full">
+                    🌅 Morning
+                  </span>
+                )}
+                {detailData.eveningShift && (
+                  <span className="bg-[#5d5fef] text-white text-xs px-2 py-0.5 rounded-full">
+                    🌙 Evening
+                  </span>
+                )}
+              </div>
+            </div>
+          )}
+
+          <p>
+            <strong>From:</strong>{" "}
+            {detailData.startdate
+              ? dayjs(detailData.startdate).format("DD-MM-YYYY")
+              : "-"}
+          </p>
+
+          <p>
+            <strong>To:</strong>{" "}
+            {detailData.enddate
+              ? dayjs(detailData.enddate).format("DD-MM-YYYY")
+              : "-"}
+          </p>
+
+        </div>
+      )}
+
+      {/* Reason */}
+      <div className="border-b pb-2">
+        <p className="font-semibold mb-1">Reason</p>
+        <p className="text-gray-600 whitespace-pre-line text-sm">
+          {detailData.reasonAbsence || "-"}
+        </p>
+      </div>
+
+      {/* Further Occurrence */}
+      <div className="border-b pb-2">
+        <p className="font-semibold mb-1">Further Occurrence</p>
+        <p className="text-gray-600 whitespace-pre-line text-sm">
+          {detailData.furtherOccurence || "-"}
+        </p>
+      </div>
+
+      {/* Status */}
+      <div>
+        <p>
+          <strong>Status:</strong>{" "}
+          <span
+            className={`font-medium ${
+              detailData.status === 0
+                ? "text-yellow-600"
+                : detailData.status === 1
+                ? "text-green-600"
+                : "text-red-600"
+            }`}
+          >
+            {detailData.status === 0
+              ? "Pending"
+              : detailData.status === 1
+              ? "Approved"
+              : "Rejected"}
+          </span>
+        </p>
+
+        <p className="text-xs text-gray-500 mt-1">
+          Applied:{" "}
+          {detailData.createdDate
+            ? dayjs(detailData.createdDate).format("DD-MM-YYYY")
+            : "-"}
+        </p>
+      </div>
+
+    </div>
+  )}
+</Modal>
     </div>
   );
 }

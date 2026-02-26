@@ -4,17 +4,34 @@ import axios from "axios";
 import { toast } from "sonner";
 
 
+
 export const getStaffApplication = async (): Promise<StaffLeaveApplication[]> => {
-    try{
-        const response = await axiosInstance.get<StaffLeaveApplication[]>(`/StaffSetting/GetStaffApplication`);
-        return response.data;
-    } 
-    catch (error: unknown) {
-        if (axios.isAxiosError(error)) {
-            toast.error('Axios error:', error.response?.data || error.message);
-        } else {
-            toast.error('Unexpected error');
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axiosInstance.get("/StaffSetting/GetStaffApplication",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`
         }
-        throw error; 
-    }
+      });
+     return response.data;
+  } 
+  catch (error: any) {
+    toast.error(error);
+
+    throw error;
+  }
+};
+
+export const getLeaveApplicationById = async (LeaveId: number): Promise<StaffLeaveApplication> => {
+  try {
+    const response = await axiosInstance.get<StaffLeaveApplication>(`/StaffSetting/GetStaffApplicationById/${LeaveId}`);
+    return response.data;
+  } 
+   catch (error: any) {
+    toast.error(error);
+
+    throw error;
+  }
 };
