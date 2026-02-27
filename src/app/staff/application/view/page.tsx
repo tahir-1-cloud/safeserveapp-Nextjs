@@ -170,7 +170,7 @@ export default function StaffApplicationsPage() {
           <div>
             <Button
               type="primary"
-              className="!h-[48px] w-full !rounded-[10px] !bg-[#5d5fef]"
+              className="!h-[33px] w-full !rounded-[10px] !bg-[#5d5fef]"
               onClick={() => {
                 setAppliedFilter(true);
                 setCurrentPage(1);
@@ -182,7 +182,7 @@ export default function StaffApplicationsPage() {
 
           <div>
             <Button
-              className="!h-[48px] w-full !rounded-[10px]"
+              className="!h-[33px] w-full !rounded-[10px]"
               onClick={() => {
                 setStartFilter("");
                 setEndFilter("");
