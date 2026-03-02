@@ -106,7 +106,7 @@ export default function StaffProfilePage() {
             </h2>
             <p className="mt-1 text-gray-100">{staff.email}</p>
             <p className="mt-1 text-gray-200 text-sm">
-             {staff?.jobRole ?? "Staff Member"}
+             Department: {staff?.jobRole ?? "Staff Member"}
               
             </p>
           </div>
