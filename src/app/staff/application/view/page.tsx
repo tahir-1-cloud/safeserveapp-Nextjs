@@ -145,6 +145,7 @@ export default function StaffApplicationsPage() {
                 setStartFilter(date ? date.format("DD-MM-YYYY") : "")
               }
             />
+            
           </div>
 
           <div className="md:col-span-2">

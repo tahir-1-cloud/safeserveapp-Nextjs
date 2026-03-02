@@ -13,3 +13,45 @@ export interface StaffLeaveApplication {
   status: number;
   createdDate: string;      // ISO datetime string
 }
+
+export interface LeaveCounts {
+  pending: number;
+  approved: number;
+  cancelled: number;
+}
+
+export interface JobDescription {
+  jobRoleId: number;
+  description: string;
+}
+
+export interface Policy {
+  title: string;
+  details: string;
+}
+
+export interface StaffProfile {
+  id: number;
+  title: string;
+  gender: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  contact: string;
+  address: string;
+  city: string;
+  postcode: string;
+  jobRole: string | null;
+  wagePerHour: number;
+
+  // nullable from API
+  leaveApplications: unknown[] | null;
+
+  leaveCounts: LeaveCounts;
+
+  // removed schedules → keep nullable in case backend sends later
+  schedules: null;
+
+  jobDescriptions: JobDescription[];
+  policies: Policy[];
+}
