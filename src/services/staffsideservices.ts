@@ -1,5 +1,5 @@
 import axiosInstance from "@/services/axiosInstance";
-import {StaffLeaveApplication, StaffProfile} from "@/types/staffSidedto";
+import {StaffLeaveApplication, StaffProfile,StaffSchedule} from "@/types/staffSidedto";
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -53,6 +53,29 @@ export const getStaffProfile = async (): Promise<StaffProfile> => {
   catch (error: any) {
     toast.error(error);
 
+    throw error;
+  }
+};
+
+export const getStaffSchedule = async (): Promise<StaffSchedule[]> => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axiosInstance.get<StaffSchedule[]>( "/StaffSetting/GetUserSchedules",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch 
+  (error: unknown) {
+    if (axios.isAxiosError(error)) {
+      toast.error(error.response?.data || error.message);
+    } else {
+      toast.error("Unexpected error");
+    }
     throw error;
   }
 };

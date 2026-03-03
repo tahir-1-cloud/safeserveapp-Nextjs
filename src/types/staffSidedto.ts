@@ -55,3 +55,26 @@ export interface StaffProfile {
   jobDescriptions: JobDescription[];
   policies: Policy[];
 }
+
+export interface StaffSchedule {
+  id: number;
+  staffName: string;
+  startDate: string;      // ISO Date string
+  endDate: string;        // ISO Date string
+  startTime: string;      // e.g. "11:23 AM"
+  endTime: string;        // e.g. "03:00 PM"
+  scheduleType: string;   // e.g. "Weekly"
+
+  isMonday: boolean;
+  isTuesday: boolean;
+  isWednesday: boolean;
+  isThursday: boolean;
+  isFriday: boolean;
+  isSaturday: boolean;
+  isSunday: boolean;
+
+  createdAt: string;      // ISO Date string
+  staffId: number;
+  taskId: number;
+  taskTitle: string;
+}
