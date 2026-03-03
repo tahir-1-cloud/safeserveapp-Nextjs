@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { DatePicker, Button, Pagination } from "antd";
+import { DatePicker, Button, Pagination, Modal, Checkbox, Tag } from "antd";
 import dayjs from "dayjs";
-import { getStaffSchedule } from "@/services/staffsideservices";
-import { StaffSchedule } from "@/types/staffSidedto";
+import { getStaffSchedule,getScheduleDetails  } from "@/services/staffsideservices";
+import { StaffSchedule ,StaffScheduleDetail} from "@/types/staffSidedto";
 import CustomLoader from "@/components/CustomerLoader";
 import { useRouter } from "next/navigation";
 
@@ -19,6 +19,10 @@ export default function StaffSchedulePage() {
   const [startFilter, setStartFilter] = useState<string>("");
   const [endFilter, setEndFilter] = useState<string>("");
   const [appliedFilter, setAppliedFilter] = useState(false);
+
+const [detailOpen, setDetailOpen] = useState(false);
+const [detailLoading, setDetailLoading] = useState(false);
+const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>(null);
 
   // Pagination
   const [currentPage, setCurrentPage] = useState(1);
@@ -197,8 +201,7 @@ export default function StaffSchedulePage() {
                     .map((d) => (
                       <span
                         key={d.day}
-                        className="px-2 py-1 bg-green-100 text-green-600 rounded-lg text-xs"
-                      >
+                        className="px-2 py-1 bg-green-100 text-green-600 rounded-lg text-xs">
                         {d.day}
                       </span>
                     ))}
@@ -206,18 +209,21 @@ export default function StaffSchedulePage() {
 
                 <Button
                   className="!mt-4 w-full !h-[33px] !rounded-[10px] !bg-[#5d5fef] !text-white"
-                  onClick={() =>
-                    setOpenId(openId === schedule.id ? null : schedule.id)
-                  }
-                >
-                  {openId === schedule.id ? "Hide Details" : "View Details"}
+                 onClick={async () => {
+                try {
+                  setDetailLoading(true);
+                  const data = await getScheduleDetails(schedule.id);
+                  setScheduleDetail(data);
+                  setDetailOpen(true);
+                } catch (error) {
+                  console.error(error);
+                } finally {
+                  setDetailLoading(false);
+                }
+              }}> view details
                 </Button>
 
-                {openId === schedule.id && (
-                  <div className="mt-4 border-t pt-4 text-sm text-gray-600">
-                    Schedule detail API will load here...
-                  </div>
-                )}
+            
               </div>
             ))}
           </div>
@@ -234,6 +240,187 @@ export default function StaffSchedulePage() {
           </div>
         </>
       )}
+
+ <Modal
+  title="Schedule Details"
+  open={detailOpen}
+  onCancel={() => {
+    setDetailOpen(false);
+    setScheduleDetail(null);
+  }}
+  footer={null}
+  width={900}
+>
+  {detailLoading ? (
+    <div className="flex justify-center py-10">
+      <CustomLoader />
+    </div>
+  ) : scheduleDetail ? (
+    <div className="space-y-6">
+
+      {/* Main Info */}
+      <div className="border rounded-xl p-5 bg-gray-50">
+        <div className="flex justify-between items-center">
+          <h2 className="text-xl font-semibold text-gray-800">
+           Task Title: {scheduleDetail.taskTitle}
+          </h2>
+          <Tag color="blue">{scheduleDetail.scheduleType}</Tag>
+        </div>
+
+        <p className="mt-2 text-sm text-gray-600">
+          <strong>Time:</strong> {scheduleDetail.startTime} -{" "}
+          {scheduleDetail.endTime}
+        </p>
+      </div>
+
+      {/* Occurrences */}
+      <div className="space-y-5 max-h-[500px] overflow-y-auto pr-2">
+
+        {scheduleDetail.occurrences.map((occurrence) => {
+          const occurrenceDate = dayjs(occurrence.occurrenceDate);
+          const isToday = occurrenceDate.isSame(dayjs(), "day");
+          const isPast = occurrenceDate.isBefore(dayjs(), "day");
+          const disabled = !isToday; // Only today editable
+
+          return (
+            <div
+              key={occurrence.taskOccurrenceId}
+              className="border rounded-2xl p-5 bg-white shadow-sm">
+
+              {/* Header */}
+              <div className="flex justify-between items-center mb-4">
+                <div>
+                  <h4 className="font-semibold text-gray-800 text-md">
+                    {occurrenceDate.format("DD-MM-YYYY")}
+                  </h4>
+                  <p className="text-xs text-gray-500">
+                    {scheduleDetail.startTime} - {scheduleDetail.endTime}
+                  </p>
+                </div>
+
+                <Tag
+                  color={
+                    occurrence.status === 1
+                      ? "green"
+                      : isPast
+                      ? "red"
+                      : "orange"
+                  }
+                >
+                  {occurrence.status === 1
+                    ? "Completed"
+                    : isPast
+                    ? "Missed"
+                    : "Pending"}
+                </Tag>
+              </div>
+
+              {/* Main Task Checkbox (Per Date) */}
+              <div className="flex justify-between items-center bg-indigo-50 p-3 rounded-lg mb-3">
+                <span className="font-medium text-gray-800">
+                  Main Task Completion
+                </span>
+
+                <Checkbox
+                  disabled={disabled}
+                  checked={occurrence.status === 1}
+                  onChange={(e) => {
+                    const updated = { ...scheduleDetail };
+
+                    const occ = updated.occurrences.find(
+                      (o) =>
+                        o.taskOccurrenceId ===
+                        occurrence.taskOccurrenceId
+                    );
+
+                    if (!occ) return;
+
+                    const newStatus = e.target.checked ? 1 : 0;
+
+                    occ.status = newStatus;
+
+                    // Sync all subtasks
+                    occ.subTasks.forEach(
+                      (s) => (s.status = newStatus)
+                    );
+
+                    setScheduleDetail(updated);
+                  }}
+                />
+              </div>
+
+              {/* Sub Tasks */}
+              <div className="space-y-2">
+                {occurrence.subTasks.map((sub) => (
+                  <div
+                    key={sub.subTaskOccurrenceId}
+                    className="flex justify-between items-center bg-gray-50 p-3 rounded-lg"
+                  >
+                    <span className="text-sm text-gray-700">
+                      {sub.subTaskName}
+                    </span>
+
+                    <Checkbox
+                      disabled={disabled}
+                      checked={sub.status === 1}
+                      onChange={(e) => {
+                        const updated = { ...scheduleDetail };
+
+                        const occ = updated.occurrences.find(
+                          (o) =>
+                            o.taskOccurrenceId ===
+                            occurrence.taskOccurrenceId
+                        );
+
+                        if (!occ) return;
+
+                        const target = occ.subTasks.find(
+                          (s) =>
+                            s.subTaskOccurrenceId ===
+                            sub.subTaskOccurrenceId
+                        );
+
+                        if (target) {
+                          target.status = e.target.checked ? 1 : 0;
+                        }
+
+                        // Auto update main task status
+                        const allCompleted = occ.subTasks.every(
+                          (s) => s.status === 1
+                        );
+
+                        occ.status = allCompleted ? 1 : 0;
+
+                        setScheduleDetail(updated);
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+
+              {/* Save Button Per Occurrence */}
+              {isToday && (
+                <div className="flex justify-end mt-4">
+                  <Button
+                    type="primary"
+                    className="!bg-[#5d5fef]"
+                    onClick={() => {
+                      // 🔥 Call update API for THIS occurrence only
+                      console.log("Saving Occurrence:", occurrence);
+                    }}
+                  >
+                    Save This Date
+                  </Button>
+                </div>
+              )}
+
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  ) : null}
+</Modal>
     </div>
   );
 }

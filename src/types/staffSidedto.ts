@@ -78,3 +78,31 @@ export interface StaffSchedule {
   taskId: number;
   taskTitle: string;
 }
+
+//Schedule Details interface model
+
+// Sub Task Occurrence
+export interface SubTaskOccurrence {
+  subTaskOccurrenceId: number;
+  subTaskId: number;
+  subTaskName: string;
+  status: number;
+}
+
+// Task Occurrence
+export interface TaskOccurrence {
+  taskOccurrenceId: number;
+  occurrenceDate: string; // ISO date string
+  status: number;
+  subTasks: SubTaskOccurrence[];
+}
+
+// Staff Schedule Detail (Main Response)
+export interface StaffScheduleDetail {
+  scheduleId: number;
+  taskTitle: string;
+  startTime: string;
+  endTime: string;
+  scheduleType: string;
+  occurrences: TaskOccurrence[];
+}
