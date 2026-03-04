@@ -5,10 +5,13 @@ import { getStaffProfile } from "@/services/staffsideservices";
 import { StaffProfile } from "@/types/staffSidedto";
 import CustomLoader from "@/components/CustomerLoader";
 import { Avatar } from "@mui/material";
+import { StaffAuth } from "@/hooks/StaffAuth";
 
 type TabType = "profile" | "applications" | "policy" | "job";
 
 export default function StaffProfilePage() {
+StaffAuth();
+
   const [staff, setStaff] = useState<StaffProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<TabType>("profile");

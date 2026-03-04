@@ -7,10 +7,12 @@ import { getStaffSchedule,getScheduleDetails  } from "@/services/staffsideservic
 import { StaffSchedule ,StaffScheduleDetail} from "@/types/staffSidedto";
 import CustomLoader from "@/components/CustomerLoader";
 import { useRouter } from "next/navigation";
-
+import { StaffAuth } from "@/hooks/StaffAuth";
 export default function StaffSchedulePage() {
-  const router = useRouter();
+  
+StaffAuth();
 
+  const router = useRouter();
   const [schedules, setSchedules] = useState<StaffSchedule[]>([]);
   const [loading, setLoading] = useState(true);
   const [openId, setOpenId] = useState<number | null>(null);

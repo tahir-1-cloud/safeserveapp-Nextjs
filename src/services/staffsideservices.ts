@@ -18,7 +18,7 @@ export const getStaffApplication = async (): Promise<StaffLeaveApplication[]> =>
      return response.data;
   } 
   catch (error: any) {
-    toast.error(error);
+     toast.error(error.message);
 
     throw error;
   }
@@ -30,7 +30,7 @@ export const getLeaveApplicationById = async (LeaveId: number): Promise<StaffLea
     return response.data;
   } 
    catch (error: any) {
-    toast.error(error);
+     toast.error(error.message);
 
     throw error;
   }
@@ -51,7 +51,7 @@ export const getStaffProfile = async (): Promise<StaffProfile> => {
      return response.data;
   } 
   catch (error: any) {
-    toast.error(error);
+   toast.error(error.message);
 
     throw error;
   }
@@ -71,7 +71,7 @@ export const getStaffSchedule = async (): Promise<StaffSchedule[]> => {
     return response.data;
   } 
   catch (error: any) {
-    toast.error(error);
+   toast.error(error.message);
 
     throw error;
   }
@@ -89,8 +89,39 @@ export const getScheduleDetails = async ( scheduleId: number): Promise<StaffSche
       }
     );
     return response.data;
+  } 
+  catch (error: any) {
+    toast.error(error.message);
+    throw error;
+  }
+};
+
+//Update main task (Api consume)
+
+export const updateTaskStatus = async ( taskOccurrenceId: number): Promise<void> => {
+  try {
+    await axiosInstance.post(
+      `/TaskManagement/UpdateTaskStatus/${taskOccurrenceId}`
+    );
+  }
+   catch (error: any) {
+    toast.error(error?.response?.data || "Failed to update task status");
+    throw error;
+  }
+};
+
+//Update subtask task (Api consume)
+
+
+export const updateSubTaskStatus = async (subTaskOccurrenceId: number): Promise<void> => {
+  try {
+    await axiosInstance.post(
+      `/TaskManagement/UpdateSubTaskOccurrenceStatus/${subTaskOccurrenceId}`
+    );
   } catch (error: any) {
-    toast.error(error);
+    toast.error(
+      error?.response?.data || "Failed to update sub task status"
+    );
     throw error;
   }
 };
