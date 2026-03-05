@@ -3,11 +3,12 @@
 import { useEffect, useMemo, useState } from "react";
 import { DatePicker, Button, Pagination, Modal, Checkbox, Tag } from "antd";
 import dayjs from "dayjs";
-import { getStaffSchedule,getScheduleDetails  } from "@/services/staffsideservices";
+import { getStaffSchedule,getScheduleDetails ,updateTaskStatus,updateSubTaskStatus  } from "@/services/staffsideservices";
 import { StaffSchedule ,StaffScheduleDetail} from "@/types/staffSidedto";
 import CustomLoader from "@/components/CustomerLoader";
 import { useRouter } from "next/navigation";
 import { StaffAuth } from "@/hooks/StaffAuth";
+import { toast } from "sonner";
 export default function StaffSchedulePage() {
   
 StaffAuth();
@@ -79,6 +80,28 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
     );
   }
 
+  const handleSaveOccurrence = async (occurrence: any) => {
+  try {
+
+    // 1️⃣ Update all subtasks first
+    for (const sub of occurrence.subTasks) {
+      if (sub.status === 1) {
+        await updateSubTaskStatus(sub.subTaskOccurrenceId);
+      }
+    }
+
+    // 2️⃣ Then update main task
+    if (occurrence.status === 1) {
+      await updateTaskStatus(occurrence.taskOccurrenceId);
+    }
+
+    toast.success("Task updated successfully");
+
+  } catch (error) {
+    console.error(error);
+    toast.error("Failed to update task");
+  }
+};
   return (
     <div className="p-6 bg-gray-50 min-h-screen">
       <div className="flex justify-between items-center mb-8">
@@ -243,7 +266,7 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
         </>
       )}
 
- <Modal
+<Modal
   title="Schedule Details"
   open={detailOpen}
   onCancel={() => {
@@ -260,41 +283,47 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
   ) : scheduleDetail ? (
     <div className="space-y-6">
 
-      {/* Main Info */}
+      {/* HEADER */}
       <div className="border rounded-xl p-5 bg-gray-50">
         <div className="flex justify-between items-center">
           <h2 className="text-xl font-semibold text-gray-800">
-           Task Title: {scheduleDetail.taskTitle}
+            Task: {scheduleDetail.taskTitle}
           </h2>
           <Tag color="blue">{scheduleDetail.scheduleType}</Tag>
         </div>
 
         <p className="mt-2 text-sm text-gray-600">
-          <strong>Time:</strong> {scheduleDetail.startTime} -{" "}
-          {scheduleDetail.endTime}
+          <strong>Time:</strong> {scheduleDetail.startTime} - {scheduleDetail.endTime}
         </p>
       </div>
 
-      {/* Occurrences */}
       <div className="space-y-5 max-h-[500px] overflow-y-auto pr-2">
-
         {scheduleDetail.occurrences.map((occurrence) => {
+
           const occurrenceDate = dayjs(occurrence.occurrenceDate);
           const isToday = occurrenceDate.isSame(dayjs(), "day");
           const isPast = occurrenceDate.isBefore(dayjs(), "day");
-          const disabled = !isToday; // Only today editable
+          const disabled = !isToday || occurrence.status === 1;
+
+          // 🔹 Always get subtasks even if API hides them
+          const subTasks =
+            occurrence.subTasks?.length
+              ? occurrence.subTasks
+              : scheduleDetail.occurrences[0]?.subTasks || [];
 
           return (
             <div
               key={occurrence.taskOccurrenceId}
-              className="border rounded-2xl p-5 bg-white shadow-sm">
+              className="border rounded-2xl p-5 bg-white shadow-sm"
+            >
 
-              {/* Header */}
+              {/* DATE HEADER */}
               <div className="flex justify-between items-center mb-4">
                 <div>
                   <h4 className="font-semibold text-gray-800 text-md">
                     {occurrenceDate.format("DD-MM-YYYY")}
                   </h4>
+
                   <p className="text-xs text-gray-500">
                     {scheduleDetail.startTime} - {scheduleDetail.endTime}
                   </p>
@@ -317,22 +346,21 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
                 </Tag>
               </div>
 
-              {/* Main Task Checkbox (Per Date) */}
+              {/* MAIN TASK */}
               <div className="flex justify-between items-center bg-indigo-50 p-3 rounded-lg mb-3">
-                <span className="font-medium text-gray-800">
-                  Main Task Completion
+                <span className="font-semibold text-gray-800">
+                  {scheduleDetail.taskTitle}
                 </span>
 
                 <Checkbox
                   disabled={disabled}
                   checked={occurrence.status === 1}
                   onChange={(e) => {
+
                     const updated = { ...scheduleDetail };
 
                     const occ = updated.occurrences.find(
-                      (o) =>
-                        o.taskOccurrenceId ===
-                        occurrence.taskOccurrenceId
+                      (o) => o.taskOccurrenceId === occurrence.taskOccurrenceId
                     );
 
                     if (!occ) return;
@@ -341,19 +369,16 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
 
                     occ.status = newStatus;
 
-                    // Sync all subtasks
-                    occ.subTasks.forEach(
-                      (s) => (s.status = newStatus)
-                    );
+                    occ.subTasks.forEach((s) => (s.status = newStatus));
 
                     setScheduleDetail(updated);
                   }}
                 />
               </div>
 
-              {/* Sub Tasks */}
+              {/* SUB TASKS */}
               <div className="space-y-2">
-                {occurrence.subTasks.map((sub) => (
+                {subTasks.map((sub) => (
                   <div
                     key={sub.subTaskOccurrenceId}
                     className="flex justify-between items-center bg-gray-50 p-3 rounded-lg"
@@ -364,29 +389,27 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
 
                     <Checkbox
                       disabled={disabled}
-                      checked={sub.status === 1}
+                      checked={sub.status === 1 || occurrence.status === 1}
                       onChange={(e) => {
+
                         const updated = { ...scheduleDetail };
 
                         const occ = updated.occurrences.find(
                           (o) =>
-                            o.taskOccurrenceId ===
-                            occurrence.taskOccurrenceId
+                            o.taskOccurrenceId === occurrence.taskOccurrenceId
                         );
 
                         if (!occ) return;
 
                         const target = occ.subTasks.find(
                           (s) =>
-                            s.subTaskOccurrenceId ===
-                            sub.subTaskOccurrenceId
+                            s.subTaskOccurrenceId === sub.subTaskOccurrenceId
                         );
 
                         if (target) {
                           target.status = e.target.checked ? 1 : 0;
                         }
 
-                        // Auto update main task status
                         const allCompleted = occ.subTasks.every(
                           (s) => s.status === 1
                         );
@@ -400,18 +423,15 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
                 ))}
               </div>
 
-              {/* Save Button Per Occurrence */}
-              {isToday && (
+              {/* SAVE BUTTON */}
+              {isToday && occurrence.status !== 1 && (
                 <div className="flex justify-end mt-4">
                   <Button
                     type="primary"
                     className="!bg-[#5d5fef]"
-                    onClick={() => {
-                      // 🔥 Call update API for THIS occurrence only
-                      console.log("Saving Occurrence:", occurrence);
-                    }}
+                    onClick={() => handleSaveOccurrence(occurrence)}
                   >
-                    Save This Date
+                   Mark Complete
                   </Button>
                 </div>
               )}
