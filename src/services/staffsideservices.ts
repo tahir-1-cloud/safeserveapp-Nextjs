@@ -1,5 +1,7 @@
 import axiosInstance from "@/services/axiosInstance";
 import {StaffLeaveApplication, StaffProfile,StaffSchedule,StaffScheduleDetail} from "@/types/staffSidedto";
+import {TaskOccurrencedto} from "@/types/taskhistorystaffsidedto";
+
 import axios from "axios";
 import { toast } from "sonner";
 
@@ -122,6 +124,28 @@ export const updateSubTaskStatus = async (subTaskOccurrenceId: number): Promise<
     toast.error(
       error?.response?.data || "Failed to update sub task status"
     );
+    throw error;
+  }
+};
+
+// Task History
+
+export const getCompletedTask = async (): Promise<TaskOccurrencedto[]> => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await axiosInstance.get<TaskOccurrencedto[]>( "/StaffSetting/GetCompletedTasks",
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } 
+  catch (error: any) {
+   toast.error(error.message);
+
     throw error;
   }
 };

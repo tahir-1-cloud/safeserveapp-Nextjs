@@ -44,8 +44,8 @@ const navItems: NavItem[] = [
 
  {
         icon: <Squares2X2Icon className="w-5 h-5"  />,
-        name: "Task Detail",
-        path: "/staff/schedule/",
+        name: "Task History",
+        path: "/staff/schedule/task-history",
      
      },
   

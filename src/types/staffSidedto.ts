@@ -106,3 +106,4 @@ export interface StaffScheduleDetail {
   scheduleType: string;
   occurrences: TaskOccurrence[];
 }
+

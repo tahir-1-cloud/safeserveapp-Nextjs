@@ -274,8 +274,7 @@ const [scheduleDetail, setScheduleDetail] = useState<StaffScheduleDetail | null>
     setScheduleDetail(null);
   }}
   footer={null}
-  width={900}
->
+  width={900}>
   {detailLoading ? (
     <div className="flex justify-center py-10">
       <CustomLoader />
